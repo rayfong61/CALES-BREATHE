@@ -19,3 +19,7 @@ CREATE TABLE client (
 	password VARCHAR(255) NOT NULL,             -- 密碼
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+INSERT INTO client (client_name, contact_mobile, contact_mail, birthday, address, password)
+VALUES ($1, $2, $3, $4, $5, $6)
+RETURNING id, client_name, contact_mail
