@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import { Pool } from "pg";
-import bcrypt from "bcrypt"; // 加密密碼
+import bcrypt from "bcrypt"; 
 import session from "express-session";
 import passport from "passport";
 import "./auth-google.js"; 
@@ -19,7 +19,11 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:3000",
+  credentials: true
+}));
+
 app.use(express.json());
 
 // 連線PostgreSQL
@@ -29,9 +33,14 @@ const pool = new Pool({
 
 // Session 設定（可簡化）
 app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false
+  secret: process.env.SESSION_SECRET, // 從 .env 檔讀取密鑰
+  resave: false,                      // 沒有變更就不重新儲存 session
+  saveUninitialized: false,          // 沒登入就不產生 session
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24,     // session 有效期：1 天
+    secure: false,                   // 若使用 HTTPS，請設為 true
+    httpOnly: true                   // 限瀏覽器端無法透過 JS 存取 cookie
+  }
 }));
 
 app.use(passport.initialize());
@@ -99,11 +108,13 @@ app.post("/login" ,async (req, res) => {
 // 導向 Google 登入
 app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 
-// 登入成功後 callback
 app.get(
   "/auth/google/callback",
   passport.authenticate("google", { failureRedirect: "/login" }),
   (req, res) => {
+
+    console.log("登入成功的使用者：", req.user);
+
     // 成功登入後可以 redirect 或回傳 token
     // res.redirect("/dashboard"); // 或回傳 user 資訊
     res.json({ message: "登入成功", 
@@ -114,8 +125,12 @@ app.get(
 
 // 導向 Line 登入
 app.get("/auth/line", passport.authenticate("line"));
+
 app.get("/auth/line/callback", passport.authenticate("line", { failureRedirect: "/login" }),
   (req, res) => {
+
+    console.log("登入成功的使用者：", req.user);
+
     // res.redirect("/dashboard");
     res.json({ message: "登入成功", 
       user: { id: req.user.id, client_name: req.user.client_name } });
@@ -149,5 +164,25 @@ app.post("/orders", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "預約失敗" });
+  }
+});
+
+// 測試:檢查 session 是否維持
+// app.get("/me", (req, res) => {
+//   if (req.isAuthenticated()) {
+//     res.json({
+//       loggedIn: true,
+//       user: req.user
+//     });
+//   } else {
+//     res.json({ loggedIn: false });
+//   }
+// });
+
+app.get("/me", (req, res) => {
+  if (req.isAuthenticated()) {
+    res.json({ user: req.user });
+  } else {
+    res.status(401).json({ user: null });
   }
 });

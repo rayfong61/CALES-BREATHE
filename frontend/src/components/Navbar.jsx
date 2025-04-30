@@ -1,12 +1,27 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { useAuth } from "./AuthContext";
 
 function Navbar() {
   const[isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user } = useAuth();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  const menuItems = (
+    <>
+      <Link className="hover:opacity-80" to="/about">關於我們</Link>
+      <Link className="hover:opacity-80" to="/services">服務項目</Link>
+      <Link className="hover:opacity-80" to="/booking">立即預約</Link>
+      {!user ? (
+        <Link className="hover:opacity-80" to="/login">會員登入</Link>
+      ) : (
+        <Link className="hover:opacity-80" to="/account">我的帳號</Link>
+      )}
+    </>
+  );
 
   return (
     <nav className="bg-red-200 sticky top-0 z-60">
@@ -20,11 +35,7 @@ function Navbar() {
             </button>
             <nav className="hidden md:block space-x-8 text-md">
             
-              <Link className="hover:opacity-80" to="/about">關於我們</Link>
-              <Link className="hover:opacity-80" to="/services">服務項目</Link>
-              <Link className="hover:opacity-80" to="/booking">立即預約</Link>
-              <Link className="hover:opacity-80" to="/login">會員登入</Link>
-              <Link className="hover:opacity-80" to="/account">我的帳號</Link>
+            {menuItems}
             
             </nav>
           </div>
@@ -36,11 +47,7 @@ function Navbar() {
         </button>
         <nav className="flex flex-col min-h-screen items-center py-8 ">
           <Link className="w-full text-4xl text-center py-6 hover:opacity-80 leckerli-one-regular" to="/">🎀Cale's Breathe</Link>
-          <Link className="w-full text-center py-6 hover:opacity-80" to="/about">關於我們</Link>
-          <Link className="w-full text-center py-6 hover:opacity-80" to="/services">服務項目</Link>
-          <Link className="w-full text-center py-6 hover:opacity-80" to="/booking">立即預約</Link>
-          <Link className="w-full text-center py-6 hover:opacity-80" to="/login">會員登入</Link>
-          <Link className="w-full text-center py-6 hover:opacity-80" to="/account">我的帳號</Link>
+          {menuItems}
         
         </nav>
        </section>

@@ -18,8 +18,6 @@ passport.use(
     async (accessToken, refreshToken, profile, done) => {
       const googleId = profile.id;
       const name = profile.displayName;
-      
-      
   
       try {
         const existingUser = await pool.query(

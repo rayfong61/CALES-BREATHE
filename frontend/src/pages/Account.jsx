@@ -1,11 +1,25 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect} from 'react';
+import { useAuth } from "../components/AuthContext"; 
 
 function Account() {
     const [isBooking, setIsBooking] = useState(true);
+    const { user, setUser } = useAuth(); 
     
     const toggleToAditing = () => setIsBooking(false);
     const toggleToBooking = () => setIsBooking(true);
+
+    const handleLogout = () => {
+        fetch(`${import.meta.env.VITE_API_BASE}/logout`, {
+          method: "GET",
+          credentials: "include",
+        })
+          .then((res) => res.json())
+          .then(() => {
+            setUser(null);
+            window.location.href = "/"; // 可選：登出後導回首頁
+          });
+      };
 
     return (
             <div className="min-h-screen max-w-md mx-auto">
@@ -28,7 +42,8 @@ function Account() {
 
                         <div className={`hover:bg-red-300 hover:underline cursor-pointer py-3 rounded-full w-25 ${!isBooking ? 'bg-red-200' : ''}`} onClick={toggleToAditing}>個人資料</div>
 
-                        <div className='hover:bg-red-300 hover:underline cursor-pointer py-3 rounded-full w-25'>登出</div>
+                        <div className='hover:bg-red-300 hover:underline cursor-pointer py-3 rounded-full w-25'
+                             onClick={handleLogout}>登出</div>
                     </nav>
 
                     <div className='text-base bg-white px-6 pt-6 pb-20 rounded-4xl'>

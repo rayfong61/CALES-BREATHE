@@ -1,14 +1,19 @@
 import React from 'react'
-import { useState } from 'react';
+import { useState , useEffect} from 'react';
+import { useAuth } from "../components/AuthContext"; 
 
 
 
 function Login() {
   const [isLogin, setIsLogin] = useState(true);
+  const { user, setUser } = useAuth(); 
 
   const toggleToRigster = () => setIsLogin(false);
   const toggleToLogin = () => setIsLogin(true);
 
+
+
+if(!user) {
   return (
     <div className="max-w-md mx-auto min-h-screen">
       <section className='m-10'>
@@ -41,11 +46,13 @@ function Login() {
                       className="bg-rose-400 hover:bg-rose-300 active:bg-rose-200 text-white p-2 w-full  rounded-full border border-solid border-slate-900 dark:border-none">
                         登入</button>
                       <button 
-                      className="bg-rose-400 hover:bg-rose-300 active:bg-rose-200 text-white p-2 w-full  rounded-full border border-solid border-slate-900 dark:border-none flex justify-center gap-2">
+                      onClick={() => (window.location.href = "http://localhost:5000/auth/google")}
+                      className="bg-rose-400 hover:bg-rose-300 active:bg-rose-200 text-white p-2 w-full  rounded-full border border-solid border-slate-900 dark:border-none flex justify-center gap-2" >
                         <img src="src/assets/googleIcon2.png" alt="googleIcon" width="25" />
                         使用Google登入
                       </button>
                       <button 
+                      onClick={() => (window.location.href = "http://localhost:5000/auth/line")}
                       className="bg-rose-400 hover:bg-rose-300 active:bg-rose-200 text-white p-2 w-full  rounded-full border border-solid border-slate-900 dark:border-none flex justify-center gap-2">
                         <img src="src/assets/lineIcon3.png" alt="googleIcon" width="25" />
                         使用Line登入</button>
@@ -94,6 +101,7 @@ function Login() {
       </section>
     </div>
   )
-}
+}}
+
 
 export default Login;
