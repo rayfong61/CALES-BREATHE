@@ -23,3 +23,7 @@ CREATE TABLE client (
 INSERT INTO client (client_name, contact_mobile, contact_mail, birthday, address, password)
 VALUES ($1, $2, $3, $4, $5, $6)
 RETURNING id, client_name, contact_mail
+
+ALTER TABLE client ADD COLUMN provider VARCHAR(20) DEFAULT 'local';
+
+ALTER TABLE client ALTER COLUMN password DROP NOT NULL;

@@ -3,6 +3,10 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { Pool } from "pg";
 import bcrypt from "bcrypt"; // 加密密碼
+import session from "express-session";
+import passport from "passport";
+import "./auth-google.js"; 
+import "./auth-line.js";
 
 
 dotenv.config();
@@ -23,7 +27,15 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
 
-console.log("資料庫連線字串:", process.env.DATABASE_URL);
+// Session 設定（可簡化）
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 
 // 測試API
@@ -83,6 +95,42 @@ app.post("/login" ,async (req, res) => {
       res.status(500).json({ message: "登入失敗" });
     }
 });
+
+// 導向 Google 登入
+app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+
+// 登入成功後 callback
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", { failureRedirect: "/login" }),
+  (req, res) => {
+    // 成功登入後可以 redirect 或回傳 token
+    // res.redirect("/dashboard"); // 或回傳 user 資訊
+    res.json({ message: "登入成功", 
+      user: { id: req.user.id, client_name: req.user.client_name } });
+  }
+);
+
+
+// 導向 Line 登入
+app.get("/auth/line", passport.authenticate("line"));
+app.get("/auth/line/callback", passport.authenticate("line", { failureRedirect: "/login" }),
+  (req, res) => {
+    // res.redirect("/dashboard");
+    res.json({ message: "登入成功", 
+      user: { id: req.user.id, client_name: req.user.client_name } });
+  }
+);
+
+// 登出
+app.get("/logout", (req, res) => {
+  req.logout(err => {
+    if (err) { return res.status(500).json({ message: "登出失敗" }); }
+    res.json({ message: "登出成功" });
+  });
+});
+
+
 
 // 建立「新增預約」API (POST /orders)
 
