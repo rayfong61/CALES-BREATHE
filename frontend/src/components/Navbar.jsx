@@ -45,8 +45,8 @@ function Navbar() {
         <button className="text-4xl self-end p-5 cursor-pointer">
             &times;
         </button>
-        <nav className="flex flex-col min-h-screen items-center py-8 ">
-          <Link className="w-full text-4xl text-center py-6 hover:opacity-80 leckerli-one-regular" to="/">🎀Cale's Breathe</Link>
+        <nav className="flex flex-col min-h-screen items-center pt-10 gap-10">
+          <Link className="w-full text-4xl text-center hover:opacity-80 leckerli-one-regular" to="/">🎀Cale's Breathe</Link>
           {menuItems}
         
         </nav>

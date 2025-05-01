@@ -7,6 +7,8 @@ import session from "express-session";
 import passport from "passport";
 import "./auth-google.js"; 
 import "./auth-line.js";
+import "./passport-config.js";
+
 
 
 dotenv.config();
@@ -61,10 +63,10 @@ app.post("/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const result = await pool.query(
-      `INSERT INTO client (client_name, contact_mobile, contact_mail, birthday, address, password)
-       VALUES ($1, $2, $3, $4, $5, $6)
+      `INSERT INTO client (client_name, contact_mobile, contact_mail, birthday, address, password, provider)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
        RETURNING id, client_name, contact_mail`,
-      [client_name, contact_mobile, contact_mail, birthday, address, hashedPassword]
+      [client_name, contact_mobile, contact_mail, birthday, address, hashedPassword, "local"]
     );
 
     res.status(201).json({ message: "註冊成功", user: result.rows[0] });
@@ -81,8 +83,8 @@ app.post("/login" ,async (req, res) => {
 
   try {
       const userResult = await pool.query(
-        `SELECT * FROM client WHERE contact_mail = $1`,
-        [contact_mail]
+        `SELECT * FROM client WHERE contact_mail = $1 AND provider = $2`,
+        [contact_mail, "local"]
       );
 
       if (userResult.rows.length === 0){
@@ -96,14 +98,21 @@ app.post("/login" ,async (req, res) => {
         return res.status(401).json({ message: "密碼錯誤" });
       }
 
-      res.json({ message: "登入成功", 
-                user: { id: user.id, client_name: user.client_name } });
-    
+      req.login(user, (err) => {
+        if (err) return next(err);
+        console.log("登入成功的使用者：", req.user);
+        return res.json({
+          message: "登入成功",
+          user: { id: user.id, client_name: user.client_name },
+        });
+      });
+  
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "登入失敗" });
     }
-});
+  });
+
 
 // 導向 Google 登入
 app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
@@ -117,8 +126,10 @@ app.get(
 
     // 成功登入後可以 redirect 或回傳 token
     // res.redirect("/dashboard"); // 或回傳 user 資訊
-    res.json({ message: "登入成功", 
-      user: { id: req.user.id, client_name: req.user.client_name } });
+    // res.json({ message: "登入成功", 
+    //   user: { id: req.user.id, client_name: req.user.client_name } });
+    res.redirect("http://localhost:3000/account");
+
   }
 );
 
@@ -132,8 +143,9 @@ app.get("/auth/line/callback", passport.authenticate("line", { failureRedirect: 
     console.log("登入成功的使用者：", req.user);
 
     // res.redirect("/dashboard");
-    res.json({ message: "登入成功", 
-      user: { id: req.user.id, client_name: req.user.client_name } });
+    // res.json({ message: "登入成功", 
+    //   user: { id: req.user.id, client_name: req.user.client_name } });
+    res.redirect("http://localhost:3000/account");
   }
 );
 
