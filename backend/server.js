@@ -63,10 +63,10 @@ app.post("/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const result = await pool.query(
-      `INSERT INTO client (client_name, contact_mobile, contact_mail, birthday, address, password, provider)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)
+      `INSERT INTO client (client_name, contact_mail, password, provider)
+       VALUES ($1, $2, $3, $4)
        RETURNING id, client_name, contact_mail`,
-      [client_name, contact_mobile, contact_mail, birthday, address, hashedPassword, "local"]
+      [client_name, contact_mail, hashedPassword, "local"]
     );
 
     res.status(201).json({ message: "註冊成功", user: result.rows[0] });
