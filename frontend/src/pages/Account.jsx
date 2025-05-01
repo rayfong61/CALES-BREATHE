@@ -33,7 +33,7 @@ function Account() {
 
                             </div>
                             <h2 className='text-xl p-2'>
-                                曾思翎
+                                {user.client_name}
                             </h2>
                     </div>
 
@@ -58,7 +58,7 @@ function Account() {
                             <label className="text-sm py-2" htmlFor="name">姓名 : </label>
                               <input type="name" name="name" required maxLength="10" placeholder="曾思翎" className="px-2 py-2  bg-rose-50 w-full" />
                             <label className="text-sm py-2" htmlFor="name">生日 : </label>
-                              <input type="name" name="name" required maxLength="10" placeholder="1989/06/26" className="px-2 py-2  bg-rose-50 w-full" />
+                              <input type="name" name="name" required maxLength="10" placeholder={user.birthday || "未提供"} className="px-2 py-2  bg-rose-50 w-full" />
                             <label className="text-sm py-2" htmlFor="name">電話 : </label>
                               <input type="name" name="name" required maxLength="10" placeholder="0925780626" className="px-2 py-2  bg-rose-50 w-full" />
                             <label className="text-sm py-2" htmlFor="name">LINE : </label>

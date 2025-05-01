@@ -1,4 +1,3 @@
-// 建議放在一個共用檔，例如 passport-config.js，然後 import
 import passport from "passport";
 import { Pool } from "pg";
 
