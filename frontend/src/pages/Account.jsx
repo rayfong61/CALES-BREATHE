@@ -1,14 +1,86 @@
-import React from 'react';
-import { useState, useEffect} from 'react';
-import { useAuth } from "../components/AuthContext"; 
+import { useAuth } from "../components/AuthContext"; // 根據你的檔案路徑調整
+import { useState, useEffect } from "react";
+import axios from "axios";
+
 
 function Account() {
+   const API_BASE = import.meta.env.VITE_API_BASE;
+
+   
+
+    const fallbackPhoto = "default.png"; 
     const [isBooking, setIsBooking] = useState(true);
-    const { user, setUser } = useAuth(); 
-    
     const toggleToAditing = () => setIsBooking(false);
     const toggleToBooking = () => setIsBooking(true);
 
+    const { user, setUser, loading } = useAuth();
+
+    const [formData, setFormData] = useState({
+      client_name: "",
+      contact_mobile: "",
+      contact_mail: "",
+      birthday: "",
+      address: "",
+      photo: null,
+    });
+
+    
+
+    useEffect(() => {
+      if (user) {
+        setFormData({
+          client_name: user.client_name || "",
+          contact_mobile: user.contact_mobile || "",
+          contact_mail: user.contact_mail || "",
+          birthday: user.birthday?.split("T")[0] || "",
+          address: user.address || "",
+          photo: user.photo || null,
+        });
+      }
+    }, [user]);
+
+    const handleChange = (e) => {
+      const { name, value } = e.target;
+      setFormData(prev => ({ ...prev, [name]: value }));
+    };
+  
+    const handleFileChange = (e) => {
+      setFormData(prev => ({ ...prev, photo: e.target.files[0] }));
+    };
+
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+    
+      const data = new FormData();
+      for (let key in formData) {
+        if (formData[key]) data.append(key, formData[key]);
+      }
+    
+      try {
+        const res = await axios.put(`${API_BASE}/account/update`, data, {
+          withCredentials: true,
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+    
+        const updatedUser = res.data.updatedUser;
+    
+        setUser(updatedUser);
+        setFormData({
+          client_name: updatedUser.client_name || "",
+          contact_mobile: updatedUser.contact_mobile || "",
+          contact_mail: updatedUser.contact_mail || "",
+          birthday: updatedUser.birthday?.split("T")[0] || "",
+          address: updatedUser.address || "",
+          photo: updatedUser.photo || null, // ← 用新路徑覆蓋掉 File 物件
+        });
+    
+        alert("資料已更新！");
+      } catch (err) {
+        alert("更新失敗");
+      }
+    };
+  
+    
     const handleLogout = () => {
         fetch(`${import.meta.env.VITE_API_BASE}/logout`, {
           method: "GET",
@@ -20,22 +92,58 @@ function Account() {
             window.location.href = "/"; // 可選：登出後導回首頁
           });
       };
+      
+
+    if (loading) return <div>載入中...</div>;
+
+    if (!user) return <div>請先登入</div>;
+
+    let photoSrc = fallbackPhoto;
+    
+
+    if (formData.photo instanceof File) {
+      photoSrc = URL.createObjectURL(formData.photo);
+    } else if (formData.photo) {
+      // ✅ 新增判斷：是完整的 URL 就不要加 API_BASE
+      if (formData.photo.startsWith("http")) {
+        photoSrc = formData.photo;
+      } else {
+        photoSrc = `${API_BASE}${formData.photo}`;
+      }
+    } else if (user.photo) {
+      if (user.photo.startsWith("http")) {
+        photoSrc = user.photo;
+      } else {
+        photoSrc = `${API_BASE}${user.photo}`;
+      }
+    }
+
+    console.log(photoSrc);
 
     return (
+    <form onSubmit={handleSubmit} encType="multipart/form-data">
             <div className="min-h-screen max-w-md mx-auto">
                 <section className='m-6 '>
 
                     <div id='customerPic' className='grid place-content-center text-center'>
 
-                            <div className='bg-red-50 w-30 h-30 rounded-full shadow-sm grid place-content-center'>
-
-                                <section className='bg-[url(src/assets/customerPic1.png)] bg-cover bg-center w-27 h-27 rounded-full'></section>
-
-                            </div>
-                            <h2 className='text-xl p-2'>
-                                {user.client_name}
-                            </h2>
+                      <div className='bg-red-50 w-32 h-32 rounded-full shadow-sm grid place-content-center'>
+                        <div className="w-30 h-30 rounded-full overflow-hidden shadow-sm">
+                            <img
+                              src={photoSrc}
+                              alt="使用者頭像"
+                              className="w-full h-full object-cover cursor-pointer"
+                              onClick={() => document.getElementById("photoInput").click()}
+                            />
+                        </div>
+                        <input id="photoInput" type="file" accept="image/*" onChange={handleFileChange} style={{ display: "none" }}/>
+                      </div>
+                      <h2 className='text-xl p-2'>
+                          {user.client_name}
+                      </h2>
                     </div>
+                    
+                            
 
                     <nav className="text-base my-3 flex justify-center gap-2 text-center">
                         <div className={`hover:bg-red-300 hover:underline cursor-pointer py-3 rounded-full w-25 ${isBooking ? 'bg-red-200' : ''}`} onClick={toggleToBooking}>預約紀錄</div>
@@ -46,33 +154,65 @@ function Account() {
                              onClick={handleLogout}>登出</div>
                     </nav>
 
-                    <div className='text-base bg-white px-6 pt-6 pb-20 rounded-4xl'>
+                    <div className='text-base bg-white p-6 rounded-4xl'>
                         {isBooking && 
                          <p>您沒有預約紀錄</p>
                         }
 
                         {!isBooking &&
-                            <form action="" className="max-w-4xl mx-auto flex flex-col items-center gap-5 text-md ">
-
+                            
+    
                             <div className='grid  w-full items-center'>
-                            <label className="text-sm py-2" htmlFor="name">姓名 : </label>
-                              <input type="name" name="name" required maxLength="10" placeholder="曾思翎" className="px-2 py-2  bg-rose-50 w-full" />
-                            <label className="text-sm py-2" htmlFor="name">生日 : </label>
-                              <input type="name" name="name" required maxLength="10" placeholder={user.birthday || "未提供"} className="px-2 py-2  bg-rose-50 w-full" />
-                            <label className="text-sm py-2" htmlFor="name">電話 : </label>
-                              <input type="name" name="name" required maxLength="10" placeholder="0925780626" className="px-2 py-2  bg-rose-50 w-full" />
-                            <label className="text-sm py-2" htmlFor="name">LINE : </label>
-                              <input type="name" name="name" required maxLength="10" placeholder="lindseytseng" className="px-2 py-2  bg-rose-50 w-full" />
-                            <label className="text-sm py-2" htmlFor="name">地址 : </label>
-                              <input type="name" name="name" required maxLength="10" placeholder="330桃園市桃園區同德十一街136號3樓" className="px-2 py-2  bg-rose-50 w-full" />
-            
+
+                            
+
+                            <label className="text-sm py-2" >姓名 : </label>
+                            <input name="client_name" 
+                                   value={formData.client_name} 
+                                   onChange={handleChange} 
+                                   className="bg-rose-50 w-full" />
+
+                            <label className="text-sm py-2" >手機 : </label>
+                            <input name="contact_mobile" 
+                                   value={formData.contact_mobile} 
+                                   onChange={handleChange} 
+                                   className="bg-rose-50 w-full" />
+
+                            <label className="text-sm py-2" >E-mail : </label>
+                            <input name="contact_mail" 
+                                   value={formData.contact_mail} 
+                                   onChange={handleChange} 
+                                   className="bg-rose-50 w-full" />
+
+                            <label className="text-sm py-2" >生日 : </label>
+                            <input type="date" 
+                                   name="birthday" 
+                                   value={formData.birthday} 
+                                   onChange={handleChange} 
+                                   className="bg-rose-50 w-full" />
+
+                            <label className="text-sm py-2" >地址 : </label>
+                            <input name="address" 
+                                   value={formData.address} 
+                                   onChange={handleChange} 
+                                   className="bg-rose-50 w-full" />
+                            <nav className="text-sm pt-6 flex justify-center gap-2 text-center">
+                            <button type="submit"
+                                    className="bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded w-30 disabled:opacity-50 cursor-pointer">
+                                      儲存變更
+                            </button>
+                            </nav>
+                            
+          
+
+                            
                             </div>
-                            </form>
+                            
                         }
                         
                     </div>
                 </section>
-            </div>
+            </div></form>
 
     )
 }

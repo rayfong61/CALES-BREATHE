@@ -12,11 +12,15 @@ const LINE_CHANNEL_SECRET = process.env.LINE_CHANNEL_SECRET;
 passport.use(new LineStrategy({
   channelID: LINE_CHANNEL_ID,
   channelSecret: LINE_CHANNEL_SECRET,
-  callbackURL: "/auth/line/callback"
+  callbackURL: "/auth/line/callback",
+  scope: ["profile", "openid", "email"],
 },
 async (accessToken, refreshToken, profile, done) => {
   const lineId = profile.id;
   const name = profile.displayName;
+  const picture = profile.pictureUrl;
+
+  console.log(profile);
 
   try {
     // 以 lineId 來判斷使用者是否存在
@@ -29,8 +33,8 @@ async (accessToken, refreshToken, profile, done) => {
       return done(null, existingUser.rows[0]);
     } else {
       const newUser = await pool.query(
-        "INSERT INTO client (client_name, provider, provider_id) VALUES ($1, $2, $3) RETURNING *",
-        [name, "line", lineId]
+        "INSERT INTO client (client_name, provider, provider_id, photo) VALUES ($1, $2, $3, $4) RETURNING *",
+        [name, "line", lineId, picture]
       );
       return done(null, newUser.rows[0]);
     }

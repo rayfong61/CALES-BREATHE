@@ -8,6 +8,7 @@ import passport from "passport";
 import "./auth-google.js"; 
 import "./auth-line.js";
 import "./passport-config.js";
+import accountRoutes from "./accountRoutes.js";
 
 
 
@@ -27,6 +28,8 @@ app.use(cors({
 }));
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use("/uploads", express.static("uploads")); // 提供靜態圖片
 
 // 連線PostgreSQL
 const pool = new Pool({
@@ -47,6 +50,7 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use("/", accountRoutes);
 
 
 // 測試API

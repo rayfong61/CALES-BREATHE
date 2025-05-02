@@ -18,6 +18,7 @@ passport.use(
     async (accessToken, refreshToken, profile, done) => {
       const googleId = profile.id;
       const name = profile.displayName;
+      const photo = profile.photos?.[0]?.value || null;
   
       try {
         const existingUser = await pool.query(
@@ -29,9 +30,11 @@ passport.use(
           return done(null, existingUser.rows[0]);
         } else {
           const newUser = await pool.query(
-            "INSERT INTO client (client_name, provider, provider_id) VALUES ($1, $2, $3) RETURNING *",
-            [name, "google", googleId]
-          );
+            `INSERT INTO client (client_name, provider, provider_id, photo)
+             VALUES ($1, $2, $3, $4)
+             RETURNING *`,
+             [name, "google", googleId, photo]
+              );
           return done(null, newUser.rows[0]);
         }
       } catch (error) {
