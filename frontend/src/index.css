@@ -12,3 +12,25 @@
     font-weight: 400;
     font-style: normal;
   }
+
+  #customerPic {
+    position: relative;
+  }
+  
+  #customerPic:hover::after {
+    content: "變更圖像";
+    position: absolute;
+    bottom: -20px; /* 顯示在圖片下方 */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 13px;
+    visibility: visible;
+  }
+  
+  #customerPic::after {
+    visibility: hidden;
+  }

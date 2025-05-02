@@ -95,6 +95,7 @@ function Login() {
       const data = await res.json();
       setUser(data.user);         // 更新全域登入狀態
       navigate("/account");       // 導向帳號頁面
+      window.location.reload();
     } catch (err) {
       console.error("登入錯誤", err);
       alert("登入時發生錯誤");

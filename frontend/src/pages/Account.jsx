@@ -4,16 +4,34 @@ import axios from "axios";
 
 
 function Account() {
-   const API_BASE = import.meta.env.VITE_API_BASE;
-
-   
-
+    const API_BASE = import.meta.env.VITE_API_BASE;
     const fallbackPhoto = "default.png"; 
     const [isBooking, setIsBooking] = useState(true);
     const toggleToAditing = () => setIsBooking(false);
     const toggleToBooking = () => setIsBooking(true);
-
     const { user, setUser, loading } = useAuth();
+    const formatToDateInput = (dateString) => {
+      const date = new Date(dateString);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // 月份從 0 開始，所以要加 1 並補零
+      const day = String(date.getDate()).padStart(2, '0'); // 補零確保是兩位數
+      return `${year}-${month}-${day}`;
+    };
+    
+    
+
+    useEffect(() => {
+      if (user) {
+        setFormData({
+          client_name: user.client_name || "",
+          contact_mobile: user.contact_mobile || "",
+          contact_mail: user.contact_mail || "",
+          birthday: user.birthday ? formatToDateInput(user.birthday) : "",
+          address: user.address || "",
+          photo: user.photo || null,
+        });
+      }
+    }, [user]);
 
     const [formData, setFormData] = useState({
       client_name: "",
@@ -25,19 +43,6 @@ function Account() {
     });
 
     
-
-    useEffect(() => {
-      if (user) {
-        setFormData({
-          client_name: user.client_name || "",
-          contact_mobile: user.contact_mobile || "",
-          contact_mail: user.contact_mail || "",
-          birthday: user.birthday?.split("T")[0] || "",
-          address: user.address || "",
-          photo: user.photo || null,
-        });
-      }
-    }, [user]);
 
     const handleChange = (e) => {
       const { name, value } = e.target;
@@ -118,17 +123,17 @@ function Account() {
       }
     }
 
-    console.log(photoSrc);
+    // console.log(photoSrc);
 
     return (
     <form onSubmit={handleSubmit} encType="multipart/form-data">
             <div className="min-h-screen max-w-md mx-auto">
                 <section className='m-6 '>
 
-                    <div id='customerPic' className='grid place-content-center text-center'>
+                    <div className='grid place-content-center text-center '>
 
-                      <div className='bg-red-50 w-32 h-32 rounded-full shadow-sm grid place-content-center'>
-                        <div className="w-30 h-30 rounded-full overflow-hidden shadow-sm">
+                      <div id="customerPic" className='bg-red-50 w-32 h-32 rounded-full shadow-sm grid place-content-center'>
+                        <div className="w-30 h-30 rounded-full overflow-hidden shadow-sm relative">
                             <img
                               src={photoSrc}
                               alt="使用者頭像"
