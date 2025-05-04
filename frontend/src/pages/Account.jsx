@@ -10,6 +10,7 @@ function Account() {
     const toggleToAditing = () => setIsBooking(false);
     const toggleToBooking = () => setIsBooking(true);
     const { user, setUser, loading } = useAuth();
+    const [originalData, setOriginalData] = useState(null);
     const formatToDateInput = (dateString) => {
       const date = new Date(dateString);
       const year = date.getFullYear();
@@ -22,14 +23,16 @@ function Account() {
 
     useEffect(() => {
       if (user) {
-        setFormData({
+        const initialData = {
           client_name: user.client_name || "",
           contact_mobile: user.contact_mobile || "",
           contact_mail: user.contact_mail || "",
           birthday: user.birthday ? formatToDateInput(user.birthday) : "",
           address: user.address || "",
           photo: user.photo || null,
-        });
+        };
+        setFormData(initialData);
+        setOriginalData(initialData); // ← 加這行
       }
     }, [user]);
 
@@ -41,6 +44,20 @@ function Account() {
       address: "",
       photo: null,
     });
+
+    const isFormChanged = () => {
+      if (!originalData) return false;
+      for (let key in formData) {
+        if (key === "photo") {
+          // 判斷圖片是否有更新（File vs 路徑）
+          if (formData.photo instanceof File) return true;
+          if (formData.photo !== originalData.photo) return true;
+        } else if (formData[key] !== originalData[key]) {
+          return true;
+        }
+      }
+      return false;
+    };
 
     
 
@@ -203,6 +220,7 @@ function Account() {
                                    className="bg-rose-50 w-full" />
                             <nav className="text-sm pt-6 flex justify-center gap-2 text-center">
                             <button type="submit"
+                                    disabled={!isFormChanged()}
                                     className="bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded w-30 disabled:opacity-50 cursor-pointer">
                                       儲存變更
                             </button>
@@ -217,7 +235,8 @@ function Account() {
                         
                     </div>
                 </section>
-            </div></form>
+            </div>
+    </form>
 
     )
 }

@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import React from 'react'
+import { useAuth } from "./AuthContext";
 
 function Footer() {
   const year = new Date().getFullYear();
+  const { user } = useAuth();
 
   return (
     <footer id="footer" className="bg-red-200 text-md">
@@ -18,7 +20,11 @@ function Footer() {
           <Link className="hover:opacity-80" to="/about">關於我們</Link>
           <Link className="hover:opacity-80" to="/services">服務項目</Link>
           <Link className="hover:opacity-80" to="/booking">立即預約</Link>
-          <Link className="hover:opacity-80" to="/login">會員登入</Link>
+          {!user ? (
+            <Link className="hover:opacity-80" to="/login">會員登入</Link>
+          ) : (
+            <Link className="hover:opacity-80" to="/account">我的帳號</Link>
+          )}
         </nav>
         <div className="flex flex-col sm:gap-2 text-right">
           <p>Copyright &copy; {year}</p>
