@@ -28,50 +28,80 @@ function Login() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+
     try {
       const res = await fetch(`${import.meta.env.VITE_API_BASE}/register`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/json"
         },
-        body: JSON.stringify(formData),
+        credentials: "include", // ✅ 保留 cookie（session）
+        body: JSON.stringify(formData)
       });
 
       const data = await res.json();
+
       if (res.ok) {
-      setMessage("✅ " + data.message);
-      console.log("註冊成功:", data.user);
-
-      // 註冊成功後立即登入
-      const loginRes = await fetch(`${import.meta.env.VITE_API_BASE}/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          contact_mail: formData.contact_mail,
-          password: formData.password,
-        }),
-      });
-
-      const loginData = await loginRes.json();
-
-      if (loginRes.ok) {
-        setUser(loginData.user);
+        // setMessage(`✅ 歡迎 ${data.user.client_name}！註冊並登入成功`);
+        // 可選：導向 account 或 dashboard 頁面
         navigate("/account");
+        window.location.reload();
       } else {
-        alert("註冊後自動登入失敗：" + loginData.message);
+        setMessage(`❌ ${data.message}`);
       }
 
-    } else {
-      setMessage("❌ " + data.message);
+    } catch (error) {
+      console.error("註冊請求失敗", error);
+      setMessage("❌ 註冊失敗，請稍後再試");
     }
-  } catch (err) {
-    console.error(err);
-    setMessage("❌ 發送請求時發生錯誤");
-  }
-};
+  };
+
+//   const handleRegister = async (e) => {
+//     e.preventDefault();
+//     try {
+//       const res = await fetch(`${import.meta.env.VITE_API_BASE}/register`, {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify(formData),
+//       });
+
+//       const data = await res.json();
+//       if (res.ok) {
+//       setMessage("✅ " + data.message);
+//       console.log("註冊成功:", data.user);
+
+//       // 註冊成功後立即登入
+//       const loginRes = await fetch(`${import.meta.env.VITE_API_BASE}/login`, {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json"
+//         },
+//         credentials: "include",
+//         body: JSON.stringify({
+//           contact_mail: formData.contact_mail,
+//           password: formData.password,
+//         }),
+//       });
+
+//       const loginData = await loginRes.json();
+
+//       if (loginRes.ok) {
+//         setUser(loginData.user);
+//         navigate("/account");
+//       } else {
+//         alert("註冊後自動登入失敗：" + loginData.message);
+//       }
+
+//     } else {
+//       setMessage("❌ " + data.message);
+//     }
+//   } catch (err) {
+//     console.error(err);
+//     setMessage("❌ 發送請求時發生錯誤");
+//   }
+// };
 
   const handleLogin = async (e) => {
     e.preventDefault();

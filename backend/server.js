@@ -8,9 +8,7 @@ import passport from "passport";
 import "./auth-google.js"; 
 import "./auth-line.js";
 import "./passport-config.js";
-import accountRoutes from "./accountRoutes.js";
-
-
+import accountRoutes from "./accountRoutes.js";  // 專門處理帳戶相關的 API，如註冊、登入、帳戶資料修改
 
 dotenv.config();
 
@@ -22,14 +20,17 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
-app.use(cors({
-  origin: "http://localhost:3000",
-  credentials: true
+app.use(cors({                          // 設定 跨來源資源分享（CORS）
+  origin: "http://localhost:3000",     // 只允許這個來源的瀏覽器發出請求
+  credentials: true                    // 允許瀏覽器攜帶 cookie / session 資訊（例如登入後的 session）
 }));
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use("/uploads", express.static("uploads")); // 提供靜態圖片
+app.use(express.json());  
+// 啟用 Express 內建的 JSON 解析器, 可以處理 Content-Type: application/json 的 POST 請求。
+// 註冊、登入、預約等 API，使用 axios.post() 傳送 JSON 時，這段設定會自動解析 JSON 變成 req.body。
+
+app.use(express.urlencoded({ extended: true })); //  功能：處理表單資料（application/x-www-form-urlencoded）
+app.use("/uploads", express.static("uploads")); // 功能：提供 /uploads 路徑來存取伺服器上的靜態圖片或檔案。
 
 // 連線PostgreSQL
 const pool = new Pool({
@@ -43,15 +44,17 @@ app.use(session({
   saveUninitialized: false,          // 沒登入就不產生 session
   cookie: {
     maxAge: 1000 * 60 * 60 * 24,     // session 有效期：1 天
-    secure: false,                   // 若使用 HTTPS，請設為 true
+    secure: false,                   // 若使用 HTTPS，應設為 true
     httpOnly: true                   // 限瀏覽器端無法透過 JS 存取 cookie
   }
 }));
 
-app.use(passport.initialize());
-app.use(passport.session());
-app.use("/", accountRoutes);
+app.use(passport.initialize());  // 啟用 Passport 認證功能
+app.use(passport.session());  // 讓 Passport 綁定 session，維持登入狀態
 
+
+
+app.use("/", accountRoutes); // 所有被定義在 accountRoutes 裡的路由都會從 / 開始向下套用。
 
 // 測試API
 app.get("/", (req, res) => {
@@ -61,9 +64,19 @@ app.get("/", (req, res) => {
 
 // 建立「顧客註冊」API (POST /register)
 app.post("/register", async (req, res) => {
-  const { client_name, contact_mobile, contact_mail, birthday, address, password } = req.body;
+  const { client_name, contact_mail, password } = req.body;
 
   try {
+    // 檢查 email 是否已經存在
+    const emailCheck = await pool.query(
+      `SELECT id FROM client WHERE contact_mail = $1 AND provider = $2`,
+      [contact_mail, "local"]
+    );
+
+    if (emailCheck.rows.length > 0) {
+      return res.status(400).json({ message: "此 Email 已被註冊" });
+    }
+
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const result = await pool.query(
@@ -73,11 +86,24 @@ app.post("/register", async (req, res) => {
       [client_name, contact_mail, hashedPassword, "local"]
     );
 
-    res.status(201).json({ message: "註冊成功", user: result.rows[0] });
+    const user = result.rows[0];
+
+    // 自動登入（建立 session）
+    req.login(user, (err) => {
+      if (err) return next(err);
+
+      console.log("註冊並自動登入成功的使用者：", req.user);
+      return res.status(201).json({
+        message: "註冊並登入成功",
+        user: { id: user.id, client_name: user.client_name }
+      });
+    });
+
+    // res.status(201).json({ message: "註冊成功", user: result.rows[0] });
     console.log(result);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "註冊失敗" });
+    res.status(500).json({ message: "註冊失敗，請稍後再試" });
   }
 });
 

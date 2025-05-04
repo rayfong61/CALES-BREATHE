@@ -1,4 +1,3 @@
-// accountRoutes.js
 import express from "express";
 import upload from "./upload.js";
 import pool from "./db.js";
