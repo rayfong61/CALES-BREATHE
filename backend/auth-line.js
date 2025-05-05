@@ -20,7 +20,7 @@ async (accessToken, refreshToken, profile, done) => {
   const name = profile.displayName;
   const picture = profile.pictureUrl;
 
-  console.log(profile);
+  // console.log(profile);
 
   try {
     // 以 lineId 來判斷使用者是否存在

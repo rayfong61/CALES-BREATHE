@@ -26,9 +26,9 @@ passport.use(
           [googleId]
         );
     
-        if (existingUser.rows.length > 0) {
-          return done(null, existingUser.rows[0]);
-        } else {
+        if (existingUser.rows.length > 0) {             // ✅ 已註冊過 → 登入
+          return done(null, existingUser.rows[0]);      // done()	是 passport 的 callback，通知登入結果是否成功
+        } else {                                        // ❌ 尚未註冊 → 自動新增進資料庫
           const newUser = await pool.query(
             `INSERT INTO client (client_name, provider, provider_id, photo)
              VALUES ($1, $2, $3, $4)
@@ -42,11 +42,11 @@ passport.use(
       }
     })
   );
-  passport.serializeUser((user, done) => {
-    done(null, user.id);
+  passport.serializeUser((user, done) => {             // 將登入的 user.id 存到 session 中
+    done(null, user.id);                              
   });
   
-  passport.deserializeUser(async (id, done) => {
+  passport.deserializeUser(async (id, done) => {       // 將 user 放入 req.user 中
     const result = await pool.query("SELECT * FROM client WHERE id = $1", [id]);
     done(null, result.rows[0]);
   });

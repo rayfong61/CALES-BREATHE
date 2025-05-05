@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { Pool } from "pg";
+import pool from "./db.js";
 import bcrypt from "bcrypt"; 
 import session from "express-session";
 import passport from "passport";
@@ -15,13 +15,14 @@ dotenv.config();
 const app = express();
 const saltRounds = 10;
 const PORT = process.env.PORT || 5000;
+const FRONTEND_URL = process.env.FRONTEND_URL;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
 app.use(cors({                          // 設定 跨來源資源分享（CORS）
-  origin: "http://localhost:3000",     // 只允許這個來源的瀏覽器發出請求
+  origin: FRONTEND_URL,     // 只允許這個來源的瀏覽器發出請求
   credentials: true                    // 允許瀏覽器攜帶 cookie / session 資訊（例如登入後的 session）
 }));
 
@@ -32,10 +33,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true })); //  功能：處理表單資料（application/x-www-form-urlencoded）
 app.use("/uploads", express.static("uploads")); // 功能：提供 /uploads 路徑來存取伺服器上的靜態圖片或檔案。
 
-// 連線PostgreSQL
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
+
 
 // Session 設定（可簡化）
 app.use(session({
@@ -52,14 +50,9 @@ app.use(session({
 app.use(passport.initialize());  // 啟用 Passport 認證功能
 app.use(passport.session());  // 讓 Passport 綁定 session，維持登入狀態
 
-
-
 app.use("/", accountRoutes); // 所有被定義在 accountRoutes 裡的路由都會從 / 開始向下套用。
 
-// 測試API
-app.get("/", (req, res) => {
-  res.send("伺服器正常運作中！");
-});
+
 
 
 // 建立「顧客註冊」API (POST /register)
@@ -76,7 +69,8 @@ app.post("/register", async (req, res) => {
     if (emailCheck.rows.length > 0) {
       return res.status(400).json({ message: "此 Email 已被註冊" });
     }
-
+    
+    // hash客戶密碼
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const result = await pool.query(
@@ -158,7 +152,7 @@ app.get(
     // res.redirect("/dashboard"); // 或回傳 user 資訊
     // res.json({ message: "登入成功", 
     //   user: { id: req.user.id, client_name: req.user.client_name } });
-    res.redirect("http://localhost:3000/account");
+    res.redirect(`${FRONTEND_URL}/account`);
 
   }
 );
@@ -175,7 +169,7 @@ app.get("/auth/line/callback", passport.authenticate("line", { failureRedirect: 
     // res.redirect("/dashboard");
     // res.json({ message: "登入成功", 
     //   user: { id: req.user.id, client_name: req.user.client_name } });
-    res.redirect("http://localhost:3000/account");
+    res.redirect(`${FRONTEND_URL}/account`);
   }
 );
 
@@ -209,22 +203,41 @@ app.post("/orders", async (req, res) => {
   }
 });
 
-// 測試:檢查 session 是否維持
-// app.get("/me", (req, res) => {
-//   if (req.isAuthenticated()) {
-//     res.json({
-//       loggedIn: true,
-//       user: req.user
-//     });
-//   } else {
-//     res.json({ loggedIn: false });
-//   }
-// });
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.status(401).json({ message: "請先登入" });
+}
 
+// 預約歷史查詢 API
+app.get("/orders", ensureAuthenticated, async (req, res) => {
+  const { client_id } = req.query;
+
+  try {
+    const result = await pool.query(
+      `SELECT * FROM orders WHERE client_id = $1 ORDER BY booking_date DESC, booking_time DESC`,
+      [client_id]
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "查詢預約失敗" });
+  }
+});
+
+
+// 測試:檢查 session 是否維持
 app.get("/me", (req, res) => {
   if (req.isAuthenticated()) {
     res.json({ user: req.user });
   } else {
     res.status(401).json({ user: null });
   }
+});
+
+// 測試API
+app.get("/", (req, res) => {
+  res.send("伺服器正常運作中！");
 });

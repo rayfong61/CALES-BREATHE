@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Link } from 'react-router-dom';
 import AddingItems from "../components/AddingItems";
+import { useAuth } from "../components/AuthContext"; 
 
 function BookingClientContent() {
+    const { user, setUser, loading } = useAuth();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [userInfo, setUserInfo] = useState({ name:"", phone:""});
     const [isBookingSuccess, setIsBookingSuccess] = useState(false);
     const [bookingData, setBookingData] = useState(null);
+    const [confirmedBooking, setConfirmedBooking] = useState(null);
 
     useEffect(() => {
         const storedData = localStorage.getItem("bookingData")
@@ -18,13 +21,25 @@ function BookingClientContent() {
 
     const handleLogin = () => {
         setIsLoggedIn(true);
-        setUserInfo({ name: "王小明", phone: "0912345678" });
+        
+        setUserInfo({ name: user.client_name, phone: user.contact_mobile });
     }
 
     const handleSubmitBooking = () => {
         // 這邊可以加入送出API的邏輯
         setIsBookingSuccess(true);
+
+        const bookingDetails = {
+          ...JSON.parse(localStorage.getItem("bookingData")),
+          name: user.client_name,
+          phone: user.contact_mobile,
+        };
+        localStorage.setItem("bookingData", JSON.stringify(bookingDetails));
+        setConfirmedBooking(bookingDetails);
+        console.log(bookingDetails);
     };
+
+    
 
 
 
