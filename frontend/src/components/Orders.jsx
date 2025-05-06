@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { useAuth } from "../components/AuthContext"; // 確保你有提供 user.id
+import { useAuth } from "../components/AuthContext"; 
 
 function Orders() {
   const { user } = useAuth();
@@ -19,12 +19,14 @@ function Orders() {
           withCredentials: true
         });
         setOrders(res.data);
+        console.log(res.data);
       } catch (err) {
         setErrorMsg("無法取得預約紀錄");
         console.error(err);
       } finally {
         setLoading(false);
       }
+      
     };
 
     fetchOrders();
@@ -49,22 +51,12 @@ function Orders() {
                 month: "2-digit",
                 day: "2-digit"
             });
-
-            let detail = {};
-            if (typeof order.booking_detail === "string") {
-            try {
-                detail = JSON.parse(order.booking_detail);
-            } catch (e) {
-                console.error("解析 booking_detail 失敗", e);
-            }
-            } else {
-            detail = order.booking_detail || {};
-            }
+            const detail = order.booking_detail
 
             return (
-              <li key={order.id} style={{ marginBottom: "1rem", borderBottom: "1px solid #ccc", paddingBottom: "1rem" }}>
+              <li key={order.id} className="mb-4 border-b border-gray-300 pb-4">
                 <p><strong>預約日期：</strong>{formattedDate}</p>
-                <p><strong>時間：</strong>{order.booking_time.slice(0,5)}</p>
+                <p><strong>時間：</strong>{order.booking_time.slice(0,5)}</p>   
                 <p><strong>服務內容：</strong>{detail.services?.join("、")}</p>
                 <p><strong>加購項目：</strong>{detail.addons?.join("、") || "無"}</p>
                 <p><strong>總價格：</strong>${order.total_price}</p>
@@ -79,3 +71,20 @@ function Orders() {
 }
 
 export default Orders;
+
+// 👉     style={{ marginBottom: "1rem", borderBottom: "1px solid #ccc", paddingBottom: "1rem" }}
+// 等同 >> className="mb-4 border-b border-gray-300 pb-4"
+
+// 👉 order.booking_time.slice(0, 5)     
+// 從 order.booking_time 字串中，擷取前五個字元（從索引 0 開始，到索引 5 結束，但不包含 5）。
+// "17:00:00" -> "17:00"
+// 因為時間資料通常是 "HH:MM:SS" 格式，但在畫面上我們只需要顯示到「分鐘」，所以只取 "HH:MM"。
+
+// 👉 {detail.services?.join("、")} 
+// ?. 是 ES2020 的語法，意思是：
+// 如果 detail.services 存在，就呼叫 join()；如果是 undefined 或 null，就不做任何事，避免程式報錯。
+
+// join("、")
+// join() 是陣列的方法，會把陣列中的每一個元素，用指定的分隔符（這裡是「、」）組合成一個字串。
+
+// 假設 detail.services = ["A", "B", "C"]，畫面會顯示： A、B、C

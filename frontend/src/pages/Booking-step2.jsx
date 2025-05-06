@@ -151,7 +151,7 @@ function BookingDateTimeContent() {
           <button className="bg-rose-200  hover:bg-rose-300 px-4 py-2 rounded w-30 cursor-pointer">上一步</button>
         </Link>
         
-        <Link to="/booking-step3">
+        <Link to="/about">
           <button
             className="bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded  w-30 disabled:opacity-50 cursor-pointer"
             disabled={!selectedDate || !selectedTime}

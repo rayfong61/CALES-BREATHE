@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from 'react-router-dom';
 import AddingItems from "../components/AddingItems";
 import { useAuth } from "../components/AuthContext"; 
+import axios from "axios";
 
 function BookingClientContent() {
     const { user, setUser, loading } = useAuth();
@@ -30,7 +31,7 @@ function BookingClientContent() {
         setIsBookingSuccess(true);
 
         const bookingDetails = {
-          ...JSON.parse(localStorage.getItem("bookingData")),
+          ...bookingData,
           name: user.client_name,
           phone: user.contact_mobile,
         };

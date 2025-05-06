@@ -196,10 +196,10 @@ app.post("/orders", async (req, res) => {
       [client_id, booking_detail, total_price, total_duration, booking_date, booking_time]
     );
 
-    res.status(201).json({ message: "預約成功", orderId: result.rows[0].id });
+    res.status(201).json({ message: "預約成功!期待為您服務!", orderId: result.rows[0].id });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "預約失敗" });
+    res.status(500).json({ message: "預約失敗!請聯繫客服人員。" });
   }
 });
 
