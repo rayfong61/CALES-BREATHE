@@ -1,6 +1,7 @@
 import { useAuth } from "../components/AuthContext"; 
 import { useState, useEffect } from "react";
 import axios from "axios";
+import Orders from "../components/Orders";
 
 
 function Account() {
@@ -178,7 +179,7 @@ function Account() {
 
                     <div className='text-base bg-white p-6 rounded-4xl'>
                         {isBooking && 
-                         <p>您沒有預約紀錄</p>
+                         <Orders/>
                         }
 
                         {!isBooking &&

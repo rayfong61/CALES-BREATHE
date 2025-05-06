@@ -71,7 +71,9 @@ function About() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <p>服務內容：{formData.booking_detail.services.join(", ")}</p>
+      <p>姓名:{user.client_name}</p>
+      <p>手機:{user.contact_mobile}</p>
+      <p>預約項目：{formData.booking_detail.services.join(", ")}</p>
       <p>加購項目：{formData.booking_detail.addons.join(", ")}</p>
       <p>價格：{formData.total_price}</p>
       <p>時長：{formData.total_duration} 分鐘</p>
