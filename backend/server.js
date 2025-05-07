@@ -152,39 +152,39 @@ app.post("/login", async (req, res, next) => {
 
 
 // 導向 Google 登入
-app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+// app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 
-app.get(
-  "/auth/google/callback",
-  passport.authenticate("google", { successRedirect: `${FRONTEND_URL}/booking-step3` ,failureRedirect: "/login" }),
-  (req, res) => {
+// app.get(
+//   "/auth/google/callback",
+//   passport.authenticate("google", { successRedirect: `${FRONTEND_URL}/booking-step3`, failureRedirect: "/login" }),
+//   (req, res) => {
 
-    console.log("登入成功的使用者：", req.user);
+//     console.log("登入成功的使用者：", req.user);
 
-    // 成功登入後可以 redirect 或回傳 token
-    // res.redirect("/dashboard"); // 或回傳 user 資訊
-    // res.json({ message: "登入成功", 
-    //   user: { id: req.user.id, client_name: req.user.client_name } });
-    res.redirect(`${FRONTEND_URL}/account`);
+//     // 成功登入後可以 redirect 或回傳 token
+//     // res.redirect("/dashboard"); // 或回傳 user 資訊
+//     // res.json({ message: "登入成功", 
+//     //   user: { id: req.user.id, client_name: req.user.client_name } });
+//     res.redirect(`${FRONTEND_URL}/account`);
 
-  }
-);
+//   }
+// );
 
 
 // 導向 Line 登入
-app.get("/auth/line", passport.authenticate("line"));
+// app.get("/auth/line", passport.authenticate("line"));
 
-app.get("/auth/line/callback", passport.authenticate("line", { successRedirect: `${FRONTEND_URL}/booking-step3`,failureRedirect: "/login" }),
-  (req, res) => {
+// app.get("/auth/line/callback", passport.authenticate("line", { successRedirect: `${FRONTEND_URL}/booking-step3`, failureRedirect: "/login" }),
+//   (req, res) => {
 
-    console.log("登入成功的使用者：", req.user);
+//     console.log("登入成功的使用者：", req.user);
 
-    // res.redirect("/dashboard");
-    // res.json({ message: "登入成功", 
-    //   user: { id: req.user.id, client_name: req.user.client_name } });
-    res.redirect(`${FRONTEND_URL}/account`);
-  }
-);
+//     // res.redirect("/dashboard");
+//     // res.json({ message: "登入成功", 
+//     //   user: { id: req.user.id, client_name: req.user.client_name } });
+//     res.redirect(`${FRONTEND_URL}/account`);
+//   }
+// );
 
 // 登出
 app.get("/logout", (req, res) => {
@@ -253,4 +253,61 @@ app.get("/me", (req, res) => {
 // 測試API
 app.get("/", (req, res) => {
   res.send("伺服器正常運作中！");
+});
+
+
+
+
+
+
+
+
+
+app.get("/auth/line", (req, res, next) => {
+  const redirect = req.query.redirect || "/account";
+  req.session.redirectAfterLogin = redirect;
+  passport.authenticate("line")(req, res, next);
+  console.log(req.sessionID)
+});
+
+app.get("/auth/line/callback", passport.authenticate("line", {
+  failureRedirect: "/login"
+}), (req, res) => {
+  const html = `
+    <script>
+      if (window.opener) {
+        window.opener.postMessage("login-success", "http://localhost:3000");
+        window.close();
+      } else {
+        window.location.href = "http://localhost:3000/account";
+      }
+    </script>
+  `;
+  res.send(html);
+});
+
+
+// Google 登入啟動點
+app.get("/auth/google", (req, res, next) => {
+  const redirect = req.query.redirect || "/account";
+  req.session.redirectAfterLogin = redirect;
+  passport.authenticate("google", { scope: ["profile", "email"] })(req, res, next);
+  console.log(req.sessionID)
+});
+
+// Google 登入回調
+app.get("/auth/google/callback", passport.authenticate("google", {
+  failureRedirect: "/login"
+}), (req, res) => {
+  const html = `
+    <script>
+      if (window.opener) {
+        window.opener.postMessage("login-success", "http://localhost:3000");
+        window.close();
+      } else {
+        window.location.href = "http://localhost:3000/account";
+      }
+    </script>
+  `;
+  res.send(html);
 });

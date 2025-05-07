@@ -4,6 +4,7 @@ import { useAuth } from "../components/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
 
 function BookingClientContent() {
+  const VITE_API_BASE = import.meta.env.VITE_API_BASE;
   const navigate = useNavigate();
   const { user, setUser, loading } = useAuth();
   const [bookingData, setBookingData] = useState(null);
@@ -13,6 +14,8 @@ function BookingClientContent() {
   const [name, setName] = useState(user?.client_name || "");
   const [mobile, setMobile] = useState(user?.contact_mobile || "");
   const [note, setNote] = useState("");
+  const [contactMail, setContactMail] = useState("");
+  const [password, setPassword] = useState("");
 
   // 取得 localStorage 的預約資料
   useEffect(() => {
@@ -87,9 +90,79 @@ function BookingClientContent() {
       setIsSubmitted(true); // 觸發按鈕顯示"已送出"
       setTimeout(() => navigate("/account"), 1500);  // 成功後導向預約紀錄頁
       localStorage.removeItem("bookingData"); // 成功送出後清空 localStorage 資料
+      
     } catch (err) {
       setMessage(err.response?.data?.message || "預約失敗");
       console.error(err);
+    }
+  };
+
+  const handleGoogleLogin = () => {
+    const loginWindow = window.open(
+      "http://localhost:5000/auth/google?redirect=/booking-step3",
+      "_blank",
+      "width=500,height=600"
+    );
+  
+    const receiveMessage = (event) => {
+      if (event.origin !== "http://localhost:5000") return;
+  
+      if (event.data === "login-success") {
+        window.removeEventListener("message", receiveMessage);
+        loginWindow.close();
+        window.location.reload(); // 重新取得使用者資料
+      }
+    };
+  
+    window.addEventListener("message", receiveMessage);
+  };
+
+  const handleLineLogin = () => {
+    const loginWindow = window.open(
+      "http://localhost:5000/auth/line?redirect=/booking-step3",
+      "_blank",
+      "width=500,height=600"
+    );
+  
+    const receiveMessage = (event) => {
+      if (event.origin !== "http://localhost:5000") return;
+  
+      if (event.data === "login-success") {
+        window.removeEventListener("message", receiveMessage);
+        loginWindow.close();
+        window.location.reload(); // 重新取得使用者資料
+      }
+    };
+  
+    window.addEventListener("message", receiveMessage);
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+  
+    try {
+      const res = await fetch(`${VITE_API_BASE}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "include", // 保持 cookie/session
+        body: JSON.stringify({ contact_mail: contactMail, password }),
+      });
+  
+      if (!res.ok) {
+        const data = await res.json();
+        alert(data.message || "登入失敗");
+        return;
+      }
+  
+      const data = await res.json();
+      setUser(data.user);         // 更新全域登入狀態
+      navigate("/booking-step3");       // 導向帳號頁面
+      // window.location.reload();
+    } catch (err) {
+      console.error("登入錯誤", err);
+      alert("登入時發生錯誤");
     }
   };
   
@@ -99,26 +172,45 @@ function BookingClientContent() {
     return (
       <div className="max-w-xl mx-auto p-6 my-6 bg-white rounded-xl shadow-md">
         <h2 className="text-xl font-bold mb-4">請先登入以繼續預約</h2>
-        <div className="space-y-4">
-          <button
-            onClick={() => window.location.href = "http://localhost:5000/auth/google"}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded w-full"
-          >
-            使用 Google 登入
-          </button>
-          <button
-            onClick={() => window.location.href = "http://localhost:5000/auth/line"}
-            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded w-full"
-          >
-            使用 LINE 登入
-          </button>
-          <button
-            onClick={() => navigate("/login")}
-            className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded w-full"
-          >
-            使用帳號密碼登入
-          </button>
-        </div>
+        <form onSubmit={handleLogin}  className="max-w-4xl mx-auto flex flex-col items-center gap-5 text-base px-5 py-5">
+                
+                          <input  type="email"
+                                  name="email"
+                                  value={contactMail}
+                                  onChange={(e) => setContactMail(e.target.value)}
+                                  placeholder="電子郵件地址"
+                                  required 
+                                  className="px-5 py-2 rounded-full border border-solid border-slate-900 w-full" 
+                          />
+                  
+                          <input  type="password"
+                                  name="password"
+                                  value={password}
+                                  onChange={(e) => setPassword(e.target.value)}
+                                  placeholder="密碼"
+                                  required 
+                                  className=" px-5 py-2 rounded-full border border-solid border-slate-900 w-full"
+                          />
+                        
+                        <button 
+                        type="submit"
+                        className="bg-rose-400 hover:bg-rose-300 active:bg-rose-200 text-white p-2 w-full  rounded-full border border-solid cursor-pointer">
+                          登入</button>
+                        
+                      <div 
+                      onClick={handleGoogleLogin}
+                      className="bg-rose-400 hover:bg-rose-300 active:bg-rose-200 text-white p-2 w-full  rounded-full border border-solid  flex justify-center gap-2 cursor-pointer" >
+                        <img src="src/assets/googleIcon2.png" alt="googleIcon" width="25" />
+                        使用Google登入
+                      </div>
+
+                      <div
+                      onClick={handleLineLogin}
+                      className="bg-rose-400 hover:bg-rose-300 active:bg-rose-200 text-white p-2 w-full  rounded-full border border-solid   flex justify-center gap-2 cursor-pointer">
+                        <img src="src/assets/lineIcon3.png" alt="googleIcon" width="25" />
+                        使用Line登入
+                      </div>
+                </form>
       </div>
     );
   }
