@@ -311,3 +311,24 @@ app.get("/auth/google/callback", passport.authenticate("google", {
   `;
   res.send(html);
 });
+
+// GET /unavailable-times?date=2025-05-22
+app.get('/unavailable-times', async (req, res) => {
+  const { date } = req.query;
+
+  const query = `
+    SELECT 
+      booking_time AS start_time,
+      (booking_time + (total_duration || ' minutes')::interval) AS end_time
+    FROM orders
+    WHERE booking_date = $1;
+  `;
+
+  try {
+    const { rows } = await pool.query(query, [date]);
+    res.json(rows); // [{ start_time: "10:00:00", end_time: "11:00:00" }, ...]
+  } catch (err) {
+    console.error("Database error:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});

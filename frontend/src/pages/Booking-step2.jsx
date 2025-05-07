@@ -7,11 +7,12 @@ import AddingItems from "../components/AddingItems";
 
 
 // 假設這是從後端獲取的已被預約或不可預約的日期與時段
+
 const unavailableDates = ["2025-05-01", "2025-05-04"];
-const unavailableTimes = {
-  "2025-05-04": ["10:00", "14:00"],
-  "2025-05-03": ["10:00", "14:00"]
-};
+// const unavailableTimes = {
+//   "2025-05-04": ["10:00", "14:00"],
+//   "2025-05-03": ["10:00", "14:00"]
+// };
 
 const allTimeSlots = [
   "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"
@@ -38,6 +39,7 @@ function BookingDateTimeContent() {
   const [total, setTotal] = useState(0);
   const [totalDuration, setTotalDuration] = useState(0);
 
+  
 
   useEffect(() => {
     const stored = localStorage.getItem("bookingData");
@@ -55,12 +57,42 @@ function BookingDateTimeContent() {
     return !unavailableDates.includes(dateStr);
   };
 
-  const getAvailableTimes = () => {
-    if (!selectedDate) return [];
-    const dateStr = formatDate(selectedDate);
-    const timesUnavailable = unavailableTimes[dateStr] || [];
-    return allTimeSlots.filter((time) => !timesUnavailable.includes(time));
+  // const getAvailableTimes = () => {
+  //   if (!selectedDate) return [];
+  //   const dateStr = formatDate(selectedDate);
+  //   const timesUnavailable = unavailableTimes[dateStr] || [];
+  //   return allTimeSlots.filter((time) => !timesUnavailable.includes(time));
+  // };
+
+  //  時間重疊判斷邏輯（JS）
+  const isTimeSlotUnavailable = (slotTime, bookings) => {
+    const slotStart = new Date(`1970-01-01T${slotTime}:00`);
+    const slotEnd = new Date(slotStart.getTime() + 60 * 60 * 1000); // 1 小時 slot
+  
+    return bookings.some(({ start_time, end_time }) => {
+      const bookedStart = new Date(`1970-01-01T${start_time}`);
+      const bookedEnd = new Date(`1970-01-01T${end_time}`);
+      return slotStart < bookedEnd && slotEnd > bookedStart; // 重疊
+    });
   };
+
+  const [unavailableTimeRanges, setUnavailableTimeRanges] = useState([]);
+
+  useEffect(() => {
+    if (!selectedDate) return;
+    const dateStr = formatDate(selectedDate);
+
+    fetch(`http://localhost:5000/unavailable-times?date=${dateStr}`)
+      .then(res => res.json())
+      .then(data => setUnavailableTimeRanges(data))
+      .catch(err => console.error(err));
+  }, [selectedDate]);
+
+const getAvailableTimes = () => {
+  if (!selectedDate) return [];
+  return allTimeSlots.filter((time) => !isTimeSlotUnavailable(time, unavailableTimeRanges));
+};
+
 
 
 
@@ -102,17 +134,20 @@ function BookingDateTimeContent() {
           <div className="grid grid-cols-3 gap-2">
             {getAvailableTimes().map((time) => (
               <button
-                key={time}
-                onClick={() => setSelectedTime(time)}
-                className={`border p-2 rounded text-center 
-                  ${
-                  selectedTime === time ? 
-                  "bg-rose-500 text-white" : 
-                  "bg-white hover:bg-gray-100"
-                  }`}
-              >
-                {time}
-              </button>
+              key={time}
+              // disabled={isTimeSlotUnavailable(time, unavailableTimeRanges)}
+              onClick={() => setSelectedTime(time)}
+              className={`border p-2 rounded text-center 
+                ${
+                  // isTimeSlotUnavailable(time, unavailableTimeRanges)
+                  // ? "bg-gray-300 text-gray-500 cursor-not-allowed" :
+                      selectedTime === time
+                    ? "bg-rose-500 text-white"
+                    : "bg-white hover:bg-gray-100"
+                }`}
+            >
+              {time}
+            </button>
             ))}
           </div>
         </div>
