@@ -56,7 +56,7 @@ app.use("/", accountRoutes); // 所有被定義在 accountRoutes 裡的路由都
 
 
 // 建立「顧客註冊」API (POST /register)
-app.post("/register", async (req, res) => {
+app.post("/register", async (req, res, next) => {
   const { client_name, contact_mail, password } = req.body;
 
   try {
@@ -89,7 +89,14 @@ app.post("/register", async (req, res) => {
       console.log("註冊並自動登入成功的使用者：", req.user);
       return res.status(201).json({
         message: "註冊並登入成功",
-        user: { id: user.id, client_name: user.client_name }
+        user: {
+    id: user.id,
+    client_name: user.client_name,
+    contact_mail: user.contact_mail,
+    contact_mobile: user.contact_mobile, // 加上這一行
+    provider: user.provider,
+    // 你還可以加上其他欄位
+  },
       });
     });
 
@@ -102,7 +109,7 @@ app.post("/register", async (req, res) => {
 });
 
 // 建立「顧客登入」API (POST /login)
-app.post("/login" ,async (req, res) => {
+app.post("/login", async (req, res, next) => {
   const { contact_mail, password } = req.body;
 
   try {
@@ -127,7 +134,13 @@ app.post("/login" ,async (req, res) => {
         console.log("登入成功的使用者：", req.user);
         return res.json({
           message: "登入成功",
-          user: { id: user.id, client_name: user.client_name },
+          user: {
+            id: user.id,
+            client_name: user.client_name,
+            contact_mail: user.contact_mail,
+            contact_mobile: user.contact_mobile,
+            provider: user.provider,
+          }
         });
       });
   
@@ -143,7 +156,7 @@ app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "em
 
 app.get(
   "/auth/google/callback",
-  passport.authenticate("google", { failureRedirect: "/login" }),
+  passport.authenticate("google", { successRedirect: `${FRONTEND_URL}/booking-step3` ,failureRedirect: "/login" }),
   (req, res) => {
 
     console.log("登入成功的使用者：", req.user);
@@ -161,7 +174,7 @@ app.get(
 // 導向 Line 登入
 app.get("/auth/line", passport.authenticate("line"));
 
-app.get("/auth/line/callback", passport.authenticate("line", { failureRedirect: "/login" }),
+app.get("/auth/line/callback", passport.authenticate("line", { successRedirect: `${FRONTEND_URL}/booking-step3`,failureRedirect: "/login" }),
   (req, res) => {
 
     console.log("登入成功的使用者：", req.user);
@@ -186,14 +199,14 @@ app.get("/logout", (req, res) => {
 // 建立「新增預約」API (POST /orders)
 
 app.post("/orders", async (req, res) => {
-  const { client_id, booking_detail, total_price, total_duration, booking_date, booking_time } = req.body;
+  const { client_id, booking_detail, total_price, total_duration, booking_date, booking_time, booking_note } = req.body;
 
   try {
     const result = await pool.query(
-      `INSERT INTO orders (client_id, booking_detail, total_price, total_duration, booking_date, booking_time)
-       VALUES ($1, $2, $3, $4, $5, $6)
+      `INSERT INTO orders (client_id, booking_detail, total_price, total_duration, booking_date, booking_time, booking_note)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
        RETURNING id`,
-      [client_id, booking_detail, total_price, total_duration, booking_date, booking_time]
+      [client_id, booking_detail, total_price, total_duration, booking_date, booking_time, booking_note]
     );
 
     res.status(201).json({ message: "預約成功!期待為您服務!", orderId: result.rows[0].id });

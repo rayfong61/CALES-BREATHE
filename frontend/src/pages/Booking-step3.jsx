@@ -1,153 +1,196 @@
-import React, { useState, useEffect } from "react";
-import { Link } from 'react-router-dom';
-import AddingItems from "../components/AddingItems";
-import { useAuth } from "../components/AuthContext"; 
 import axios from "axios";
+import { useState, useEffect } from "react";
+import { useAuth } from "../components/AuthContext";
+import { useNavigate, useLocation } from "react-router-dom";
 
 function BookingClientContent() {
-    const { user, setUser, loading } = useAuth();
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [userInfo, setUserInfo] = useState({ name:"", phone:""});
-    const [isBookingSuccess, setIsBookingSuccess] = useState(false);
-    const [bookingData, setBookingData] = useState(null);
-    const [confirmedBooking, setConfirmedBooking] = useState(null);
+  const navigate = useNavigate();
+  const { user, setUser, loading } = useAuth();
+  const [bookingData, setBookingData] = useState(null);
+  const [formData, setFormData] = useState(null);
+  const [message, setMessage] = useState("");
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [name, setName] = useState(user?.client_name || "");
+  const [mobile, setMobile] = useState(user?.contact_mobile || "");
+  const [note, setNote] = useState("");
 
-    useEffect(() => {
-        const storedData = localStorage.getItem("bookingData")
+  // 取得 localStorage 的預約資料
+  useEffect(() => {
+    const storedData = localStorage.getItem("bookingData");
+    if (storedData) {
+      const parsed = JSON.parse(storedData);
+      setBookingData(parsed);
+    }
+  }, []);
 
-        if(storedData) {
-            setBookingData(JSON.parse(storedData));
-        }
-    },[]);
+  // 等 user 和 bookingData 都有值後，再建立 formData
+  const addonMap = {
+    "add-toes": "腳趾加購",
+    "add-armpit": "腋下加購",
+    "add-fingers": "手指加購",
+    "add-lip": "上唇加購",
+    // 可以依實際情況補上
+  };
 
-    const handleLogin = () => {
-        setIsLoggedIn(true);
-        
-        setUserInfo({ name: user.client_name, phone: user.contact_mobile });
+  // useEffect(() => {
+  //   if (user) {
+  //     setName(user.client_name || "");
+  //     setMobile(user.contact_mobile || "");
+  //   }
+  // }, [user]);
+
+  useEffect(() => {
+    if (user && bookingData) {
+      const services = bookingData.selectedServices.map(s => s.name);
+      const addons = bookingData.selectedAddons.map(id => addonMap[id] || id);
+      setName(user.client_name || "");
+      setMobile(user.contact_mobile || "");
+  
+      setFormData({
+        client_id: user.id,
+        booking_detail: {
+          services,
+          addons
+        },
+        total_price: bookingData.total,
+        total_duration: bookingData.totalDuration,
+        booking_date: bookingData.date,
+        booking_time: bookingData.time
+      });
+    }
+  }, [user, bookingData]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!formData) return;
+
+    if (!name.trim() || !mobile.trim()) {
+      setInputError("姓名與手機為必填欄位");
+      return;
     }
 
-    const handleSubmitBooking = () => {
-        // 這邊可以加入送出API的邏輯
-        setIsBookingSuccess(true);
+    try {
+      // 1. 更新使用者資料
+      await axios.put("http://localhost:5000/account/update2", {
+        client_name: name.trim(),
+        contact_mobile: mobile.trim(),
+      }, { withCredentials: true });
 
-        const bookingDetails = {
-          ...bookingData,
-          name: user.client_name,
-          phone: user.contact_mobile,
-        };
-        localStorage.setItem("bookingData", JSON.stringify(bookingDetails));
-        setConfirmedBooking(bookingDetails);
-        console.log(bookingDetails);
-    };
+      // 2. 提交預約資料
+      const res = await axios.post("http://localhost:5000/orders", {
+        ...formData,
+        booking_detail: JSON.stringify(formData.booking_detail),
+        booking_note: note.trim() || null
+      }, { withCredentials: true });
 
-    
+      setMessage(res.data.message);
+      setIsSubmitted(true); // 觸發按鈕顯示"已送出"
+      setTimeout(() => navigate("/account"), 1500);  // 成功後導向預約紀錄頁
+      localStorage.removeItem("bookingData"); // 成功送出後清空 localStorage 資料
+    } catch (err) {
+      setMessage(err.response?.data?.message || "預約失敗");
+      console.error(err);
+    }
+  };
+  
 
 
-
-    return(
-        <div className="max-w-xl mx-auto p-6 my-6 bg-white rounded-xl shadow-md">
-            {!isLoggedIn ? (
-                
-                <div className="text-center py-10">
-                    <p className="mb-4 text-lg">請先登入 Cale's Breathe</p>
-                    <button onClick={handleLogin} className="bg-blue-500 text-white px-4 py-2 rounded">Google登入</button>
-                    <button onClick={handleLogin} className="bg-green-500 text-white px-4 py-2 rounded ml-2">Line登入</button>
-                </div>
-            ) : !isBookingSuccess ? (
-                <div>
-                    <h2 className="text-xl font-bold mb-4">確認預約內容</h2>
-                    <p><strong>姓名：</strong> {userInfo.name}</p>
-                    <p><strong>電話：</strong> {userInfo.phone}</p>
-
-                    {/* 顯示預約內容 */}
-                    {bookingData ? (
-                        <div className="mt-4">
-                            <p><strong>預約日期：</strong>{bookingData.date}</p>
-                            <p><strong>預約時間：</strong>{bookingData.time}</p>
-                            <p className="mt-2 font-bold">預約項目：</p>
-                            <ul className="list-disc list-inside">
-                                {bookingData.selectedServices.map((item) => (
-                                    <li key={item.id}>
-                                        {item.name} - ${item.price}
-                                    </li>
-                                ))}
-                            </ul>
-
-                            {bookingData.selectedAddons.length > 0 && (
-                                <>
-                                    
-                                    <ul className="list-disc list-inside">
-                                    {bookingData.selectedAddons.map((id) => {
-                                        const addon = AddingItems.find((item) => item.id === id);
-                                        return (
-                                        <li key={id}>
-                                            加購項目：{addon?.name} - ${addon?.price}
-                                        </li>
-                                        );
-                                    })}
-                                    </ul>
-                                </>
-                            )}
-
-                            <p className="mt-4"><strong>總金額：</strong> NT$ {bookingData.total}</p>
-                            <p><strong>總時長：</strong> {bookingData.totalDuration} 分鐘</p>
-                        </div>
-                    ) : (
-                        <p className="text-red-500">無預約資料</p>
-                    )}
-
-                    <button onClick={handleSubmitBooking} className="mt-6 bg-rose-500 text-white px-4 py-2 rounded">送出預約單</button>
-                </div>
-            ) : (
-                <div className="text-center">
-                    <h2 className="text-2xl font-bold text-rose-600 mb-4">預約成功！</h2>
-                    <p>感謝您的預約，我們將盡快與您聯繫。</p>
-                    <Link to="/" className="mt-6 inline-block bg-rose-500 text-white px-4 py-2 rounded">回首頁</Link>
-                </div>
-            )}
+  if (!user) {
+    return (
+      <div className="max-w-xl mx-auto p-6 my-6 bg-white rounded-xl shadow-md">
+        <h2 className="text-xl font-bold mb-4">請先登入以繼續預約</h2>
+        <div className="space-y-4">
+          <button
+            onClick={() => window.location.href = "http://localhost:5000/auth/google"}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded w-full"
+          >
+            使用 Google 登入
+          </button>
+          <button
+            onClick={() => window.location.href = "http://localhost:5000/auth/line"}
+            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded w-full"
+          >
+            使用 LINE 登入
+          </button>
+          <button
+            onClick={() => navigate("/login")}
+            className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded w-full"
+          >
+            使用帳號密碼登入
+          </button>
         </div>
+      </div>
+    );
+  }
 
-    )
+  if (!formData) return <p>載入中...</p>;
+
+  return (
+    <div className="max-w-xl mx-auto p-6 my-6 bg-white rounded-xl shadow-md">
+       {(!user) && {
+    // 顯示請先登入的頁面
+    // 設計登入google / line / 或local 三個選項
+    // 完成後帶入資料繼續下列步驟
+  } }
+      <h2 className="text-xl font-bold mb-4">請確認以下內容是否正確:</h2>
+      
+      <form onSubmit={handleSubmit} className="px-2 ">
+
+        <h3 className="block my-2 font-semibold">聯絡資訊：</h3>
+
+        <label className="block my-1">*姓名 : </label>
+        <input
+        type="text"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        required
+        className="border p-2 rounded w-full"
+        />
+        <label className="block my-1">*手機 : </label>
+        <input
+        type="text"
+        value={mobile}
+        onChange={(e) => setMobile(e.target.value)}
+        required
+        className="border p-2 rounded w-full"
+        />
+        <label className="block my-1">備註事項 : </label>
+        <textarea
+        type="text"
+        value={note}
+        onChange={(e) => setNote(e.target.value)}
+        className="border p-2 rounded w-full "
+        placeholder="例如 : 懷孕第幾周? 第一次除毛等等"
+        rows={2}
+        />
+
     
+
+        <h3 className="block my-2 font-semibold">預約內容：</h3>
+        <p>預約項目：{formData.booking_detail.services.join(", ")}</p>
+        <p>加購項目：{formData.booking_detail.addons.join(", ") || "無"}</p>
+        <p>價格：{formData.total_price}</p>
+        <p>時長：{formData.total_duration} 分鐘</p>
+        <p>日期：{formData.booking_date}</p>
+        <p>時間：{formData.booking_time}</p>
+
+        <button type="submit"
+                disabled={isSubmitted}
+                className="bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded  w-30 disabled:opacity-50 cursor-pointer my-2 block mx-auto">
+                  {isSubmitted ? "已送出" : "送出預約"}
+        </button>
+        {message && <p className="text-rose-400 text-center text-xl font-bold py-3">{message}</p>}
+      </form>
+    </div>
+  );
 }
 
 export default BookingClientContent;
 
-{/* 
-            1. 判斷是否登入
-                如果未登入：
-                顯示提示：「請先登入 Cale's Breathe」
-                提供「Google登入」和「Line登入」按鈕
-
-                如果已登入：
-                顯示「用戶姓名」和「電話號碼」
-                          
             
-            2. 顯示預約內容（從 localStorage 或 context 取資料）
-                預約的服務（selectedServices）
-                加購項目（selectedAddons）
-                預約日期（selectedDate）
-                預約時間（selectedTime）
-                總金額和總時長
+ 
 
-            3. 送出預約單
-                點擊「送出預約單」按鈕
-                把預約資料（+ 使用者資訊）發送到後端 API 或存入資料庫
-                可以設定 loading 狀態避免重複送出
-
-            4. 顯示預約成功畫面
-                成功後：
-                顯示「預約成功！」訊息
-                告知客人預約編號、細節
-                可以提供「回到首頁」或「查看我的預約」按鈕
-
-            5. 登入後可查看自己的預約
-                顯示「我的預約」列表頁
-                包含：服務內容、時間、地點、狀態（ex: 已確認 / 已取消）
-                            
-            
-            
-            */}
-
-            
-              
+// Note:
+// 🔍 為什麼要用 trim()？  
+// 移除字串開頭與結尾的空白字元(只影響「開頭與結尾」的空白，不會移除中間的空白)
+// "王 小明".trim()  // => "王 小明"
