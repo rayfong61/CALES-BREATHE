@@ -9,6 +9,7 @@ import "./auth-google.js";
 import "./auth-line.js";
 import "./passport-config.js";
 import accountRoutes from "./accountRoutes.js";  // 專門處理帳戶相關的 API，如註冊、登入、帳戶資料修改
+import ordersRoutes from "./ordersRoutes.js";
 
 dotenv.config();
 
@@ -51,6 +52,7 @@ app.use(passport.initialize());  // 啟用 Passport 認證功能
 app.use(passport.session());  // 讓 Passport 綁定 session，維持登入狀態
 
 app.use("/", accountRoutes); // 所有被定義在 accountRoutes 裡的路由都會從 / 開始向下套用。
+app.use('/', ordersRoutes);
 
 
 
@@ -151,42 +153,6 @@ app.post("/login", async (req, res, next) => {
   });
 
 
-// 導向 Google 登入
-// app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
-
-// app.get(
-//   "/auth/google/callback",
-//   passport.authenticate("google", { successRedirect: `${FRONTEND_URL}/booking-step3`, failureRedirect: "/login" }),
-//   (req, res) => {
-
-//     console.log("登入成功的使用者：", req.user);
-
-//     // 成功登入後可以 redirect 或回傳 token
-//     // res.redirect("/dashboard"); // 或回傳 user 資訊
-//     // res.json({ message: "登入成功", 
-//     //   user: { id: req.user.id, client_name: req.user.client_name } });
-//     res.redirect(`${FRONTEND_URL}/account`);
-
-//   }
-// );
-
-
-// 導向 Line 登入
-// app.get("/auth/line", passport.authenticate("line"));
-
-// app.get("/auth/line/callback", passport.authenticate("line", { successRedirect: `${FRONTEND_URL}/booking-step3`, failureRedirect: "/login" }),
-//   (req, res) => {
-
-//     console.log("登入成功的使用者：", req.user);
-
-//     // res.redirect("/dashboard");
-//     // res.json({ message: "登入成功", 
-//     //   user: { id: req.user.id, client_name: req.user.client_name } });
-//     res.redirect(`${FRONTEND_URL}/account`);
-//   }
-// );
-
-// 登出
 app.get("/logout", (req, res) => {
   req.logout(err => {
     if (err) { return res.status(500).json({ message: "登出失敗" }); }
@@ -224,21 +190,21 @@ function ensureAuthenticated(req, res, next) {
 }
 
 // 預約歷史查詢 API
-app.get("/orders", ensureAuthenticated, async (req, res) => {
-  const { client_id } = req.query;
+// app.get("/orders", ensureAuthenticated, async (req, res) => {
+//   const { client_id } = req.query;
 
-  try {
-    const result = await pool.query(
-      `SELECT * FROM orders WHERE client_id = $1 ORDER BY booking_date DESC, booking_time DESC`,
-      [client_id]
-    );
+//   try {
+//     const result = await pool.query(
+//       `SELECT * FROM orders WHERE client_id = $1 ORDER BY booking_date DESC, booking_time DESC`,
+//       [client_id]
+//     );
 
-    res.json(result.rows);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "查詢預約失敗" });
-  }
-});
+//     res.json(result.rows);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "查詢預約失敗" });
+//   }
+// });
 
 
 // 測試:檢查 session 是否維持

@@ -88,7 +88,10 @@ function BookingClientContent() {
 
       setMessage(res.data.message);
       setIsSubmitted(true); // 觸發按鈕顯示"已送出"
-      setTimeout(() => navigate("/account"), 1500);  // 成功後導向預約紀錄頁
+      setTimeout(() => {
+        navigate("/account");      // 成功後導向預約紀錄頁
+        window.location.reload();
+      }, 1500);                                 
       localStorage.removeItem("bookingData"); // 成功送出後清空 localStorage 資料
       
     } catch (err) {
@@ -158,8 +161,7 @@ function BookingClientContent() {
   
       const data = await res.json();
       setUser(data.user);         // 更新全域登入狀態
-      navigate("/booking-step3");       // 導向帳號頁面
-      // window.location.reload();
+      navigate("/booking-step3"); 
     } catch (err) {
       console.error("登入錯誤", err);
       alert("登入時發生錯誤");

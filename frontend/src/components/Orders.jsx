@@ -7,6 +7,19 @@ function Orders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
+
+  const handleCancel = async (id) => {
+    if (!window.confirm("確定要取消這筆預約嗎？")) return;
+  
+    try {
+      await axios.put(`http://localhost:5000/orders/cancel/${id}`, {}, { withCredentials: true });
+      setOrders((prev) => prev.filter((order) => order.id !== id)); // 更新畫面
+    } catch (err) {
+      console.error("取消失敗", err);
+      alert("取消預約失敗");
+    }
+  };
+  
   
 
   useEffect(() => {
@@ -61,6 +74,16 @@ function Orders() {
                 <p><strong>加購項目：</strong>{detail.addons?.join("、") || "無"}</p>
                 <p><strong>總價格：</strong>${order.total_price}</p>
                 <p><strong>總時長：</strong>{order.total_duration} 分鐘</p>
+                <p><strong>備註：</strong>{order.booking_note} </p>
+                 {/* 新增取消按鈕（限制過去預約不能取消） */}
+                  {new Date(order.booking_date) >= new Date() && !order.is_cancelled && (
+                    <button
+                      onClick={() => handleCancel(order.id)}
+                      className="mt-3 px-5 py-1 bg-red-400 text-white rounded hover:bg-red-500 cursor-pointer"
+                    >
+                      取消預約
+                    </button>
+                  )}
               </li>
             );
           })}
