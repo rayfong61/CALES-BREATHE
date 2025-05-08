@@ -4,11 +4,12 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Link } from 'react-router-dom';
 import AddingItems from "../components/AddingItems";
+import { addMonths } from "date-fns";
 
 
-// 假設這是從後端獲取的已被預約或不可預約的日期與時段
+// 手動設定不可預約日期
+const offDates = ["2025-06-20","2025-06-28","2025-07-04", "2025-07-05"];
 
-const unavailableDates = ["2025-05-01", "2025-05-04"];
 // const unavailableTimes = {
 //   "2025-05-04": ["10:00", "14:00"],
 //   "2025-05-03": ["10:00", "14:00"]
@@ -38,6 +39,16 @@ function BookingDateTimeContent() {
   const [confirmedBooking, setConfirmedBooking] = useState(null);
   const [total, setTotal] = useState(0);
   const [totalDuration, setTotalDuration] = useState(0);
+  const [unavailableDates, setUnavailableDates] = useState([]);  // 預約「已滿」日期
+
+  useEffect(() => {
+    fetch("http://localhost:5000/unavailable-dates") // 找出預約「已滿」日期
+      .then((res) => res.json())
+      .then((data) => setUnavailableDates(data))
+      .catch((err) => console.error("Failed to load unavailable dates", err));
+  }, []);
+
+  console.log(unavailableDates);
 
   
 
@@ -54,7 +65,10 @@ function BookingDateTimeContent() {
 
   const isDateAvailable = (date) => {
     const dateStr = formatDate(date);
-    return !unavailableDates.includes(dateStr);
+    const isSunday = date.getDay() === 0; // Sunday = 0
+    const isWednesday = date.getDay() === 3; // 
+    return !isWednesday && !isSunday && !offDates.includes(dateStr) && !unavailableDates.includes(dateStr);  
+      // 「這天不是星期三，也不是星期日，也不在公休日和客滿日中 → 就允許選擇這一天。」
   };
 
   // const getAvailableTimes = () => {
@@ -115,15 +129,16 @@ const getAvailableTimes = () => {
       <div className="mb-4">
         <label className="block mb-1 font-semibold">選擇日期：</label>
         <DatePicker
-          selected={selectedDate}
+          selected={selectedDate} // 綁定目前選擇的日期狀態（selectedDate）, 讓元件是「受控元件」（controlled component）。
           onChange={(date) => {
             setSelectedDate(date);
             setSelectedTime("");
             setConfirmedBooking(null);
           }}
           filterDate={isDateAvailable}
-          minDate={new Date()}
-          dateFormat="yyyy-MM-dd"
+          minDate={new Date()} // 限制最早可以選擇「今天」，不能選過去的日期。
+          maxDate={addMonths(new Date(), 2)} // 限制最晚可選擇兩個月後的日期
+          dateFormat="yyyy-MM-dd" // 設定輸出的日期格式為 年-月-日，例如：2025-05-07。
           className="border p-2 w-full"
         />
       </div>
@@ -137,7 +152,7 @@ const getAvailableTimes = () => {
               key={time}
               // disabled={isTimeSlotUnavailable(time, unavailableTimeRanges)}
               onClick={() => setSelectedTime(time)}
-              className={`border p-2 rounded text-center 
+              className={`border p-2 rounded text-center cursor-pointer
                 ${
                   // isTimeSlotUnavailable(time, unavailableTimeRanges)
                   // ? "bg-gray-300 text-gray-500 cursor-not-allowed" :

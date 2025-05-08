@@ -332,3 +332,22 @@ app.get('/unavailable-times', async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+
+// 找出預約「已滿」日期 (工作超過八小時 = 480分鐘)
+app.get('/unavailable-dates', async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT TO_CHAR(booking_date, 'YYYY-MM-DD') AS booking_date
+      FROM orders
+      GROUP BY booking_date
+      HAVING SUM(total_duration) >= 480
+    `);
+    const dates = result.rows.map(row => row.booking_date);
+    res.json(dates); // e.g., ["2025-05-04", "2025-05-10"]
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to load unavailable dates' });
+  }
+});
+
