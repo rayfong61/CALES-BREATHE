@@ -34,3 +34,7 @@
   #customerPic::after {
     visibility: hidden;
   }
+
+html {
+  scroll-behavior: smooth;
+}
