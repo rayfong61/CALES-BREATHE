@@ -7,11 +7,11 @@ import WaxingServices from '../components/WaxingServices';
 function Services() {
   return (
     <section className="py-16 px-14 ">
-      <div className="max-w-4xl mx-auto space-y-12">
+      <div className="max-w-5xl mx-auto space-y-20">
         {WaxingServices.map((section) => (
           <div key={section.category}>
             
-            <div className="grid sm:grid-cols-2 gap-x-10 mb-10">
+            <div className="grid sm:grid-cols-2 gap-x-5 mb-10">
               
               
               <div>
@@ -41,7 +41,7 @@ function Services() {
           </div>
         ))}
       </div>
-      <div className="max-w-4xl mx-auto space-y-12 py-12">
+      <div className="max-w-5xl mx-auto space-y-12 py-20">
         {WaxingPackages.map((section) => (
           <div key={section.category}>
             <div className="grid sm:grid-cols-2 gap-x-10 mb-10">

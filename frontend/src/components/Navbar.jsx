@@ -25,7 +25,7 @@ function Navbar() {
 
   return (
     <nav className="bg-red-200 sticky top-0 z-60">
-      <section className="max-w-4xl mx-auto p-4 flex justify-between items-center">
+      <section className="max-w-5xl mx-auto p-4 flex justify-between items-center">
           <h1 className="leckerli-one-regular text-4xl">
           <Link to="/">🎀Cale's Breathe</Link>
           </h1>
