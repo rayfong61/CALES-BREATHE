@@ -39,20 +39,20 @@ const TestimonialSlider = () => {
   };
 
   return (
-    <div className="bg-rose-100 py-20 px-10 text-center font-serif">
+    <div className="bg-pink-100 py-12 px-10 text-center font-serif">
       <Slider {...settings}>
         {testimonials.map((t, index) => (
           <div key={index} className="max-w-3xl mx-auto">
-            <div className="text-white text-3xl mb-4">
+            <div className="text-white text-3xl md:text-4xl mb-4">
               {"★".repeat(t.stars)}
             </div>
-            <h2 className="text-4xl text-[#5c443a] mb-6 font-normal">
+            <h2 className="text-4xl md:text-5xl text-pink-300 mb-6 font-normal">
               "{t.quote}"
             </h2>
-            <p className="text-lg text-gray-800 max-w-2xl mx-auto mb-6 leading-relaxed font-sans">
+            <p className="text-lg md:text-xl text-gray-700 max-w-2xl mx-auto mb-6 leading-relaxed font-sans">
               {t.content}
             </p>
-            <p className="text-2xl text-[#5c443a] font-sans">- {t.name}</p>
+            <p className="text-lg md:text-xl text-gray-700 font-sans">- {t.name}</p>
           </div>
         ))}
       </Slider>

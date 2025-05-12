@@ -5,19 +5,27 @@ import Services from "./Services";
 function Home() {
     return (
       <div>
-        <section id="hero" className="max-w-full mx-auto p-4 flex flex-col justify-center text-center items-center bg-[url(src/assets/hero5.jpg)] bg-cover bg-center h-150">
-        <h2 className="text-xl md:text-2xl  text-rose-800">
-        Cale's Breathe - 質感香氣x熱蠟美肌工作坊
-        </h2>
-        <h1 className="text-4xl py-6 md:text-5xl">
-        讓肌膚深呼吸，讓妳自在閃耀
-        </h1>
-        <a href="#services">
-        <button className="rounded-full px-5 py-2 my-2 text-md border border-solid hover:text-white md:text-lg cursor-pointer">
-          服務項目
-        </button>
-        </a>
-      </section>
+        <section
+          id="hero"
+          className="relative max-w-full mx-auto p-4 flex flex-col justify-center text-center items-center h-180 overflow-hidden">
+          {/* 背景圖層 */}
+          <div className="absolute inset-0 bg-[url('src/assets/hero9.png')] bg-cover bg-center opacity-40 z-0" />
+
+          {/* 前景內容 */}
+          <div className="relative z-10 ">
+            <h2 className="text-4xl md:text-5xl text-rose-700">
+              質 感 香 氣 x 熱 蠟 美 肌
+            </h2>
+            <h1 className="text-xl py-6 md:text-2xl">
+              讓 肌 膚 深 呼 吸，讓 妳 自 在 閃 耀
+            </h1>
+            <a href="#services">
+              <button className="rounded-full px-8 py-2 my-2 text-md hover:opacity-80 md:text-lg cursor-pointer bg-rose-700 text-white">
+                服務項目
+              </button>
+            </a>
+          </div>
+        </section>
 
       <section id="intro" className='max-w-4xl mx-auto p-10 flex flex-col justify-center  items-center '>
       <h2 className="text-3xl md:text-4xl">
