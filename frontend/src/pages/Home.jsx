@@ -7,9 +7,9 @@ function Home() {
       <div>
         <section
           id="hero"
-          className="relative max-w-full mx-auto p-4 flex flex-col justify-center text-center items-center h-180 overflow-hidden">
+          className="relative max-w-full mx-auto p-4 flex flex-col justify-center text-center items-center min-h-dvh overflow-hidden">
           {/* 背景圖層 */}
-          <div className="absolute inset-0 bg-[url('src/assets/hero9.png')] bg-cover bg-center opacity-30 z-0" />
+          <div className="absolute inset-0 bg-[url('src/assets/hero9.png')] bg-cover bg-center opacity-50 z-0" />
 
           {/* 前景內容 */}
           <div className="relative z-10 ">
@@ -19,16 +19,16 @@ function Home() {
             <h1 className="text-xl py-6 md:text-2xl text-shadow-xs">
               讓 肌 膚 深 呼 吸，讓 妳 自 在 閃 耀
             </h1>
-            <a href="#services">
+            <Link to="/services">
               <button className="rounded-full px-10 py-2 my-2 text-lg hover:opacity-80 md:text-xl cursor-pointer bg-rose-700 text-white">
                 服務項目
               </button>
-            </a>
+            </Link>
           </div>
         </section>
 
-      <section id="intro" className='max-w-5xl mx-auto px-15 pt-10 grid sm:grid-cols-2 gap-10'>
-        <img src="test4.jpg" className='w-full h-full object-cover my-10'></img>
+      <section id="intro" className='max-w-5xl mx-auto px-15 py-20 grid sm:grid-cols-2 gap-x-10'>
+        <img src="test4.jpg" className='w-full h-full object-cover'></img>
         <div className='flex flex-col justify-center items-center mt-10'>
         <h2 className="text-3xl/10 md:text-4xl/12 mb-6 text-shadow-lg">
         使 用 芳 香 療 法 融 合 熱 蠟 美 肌 ，呵 護 您 的 肌 膚
@@ -47,7 +47,7 @@ function Home() {
         </article>
         </div>
       </section>
-      <div id="services" className='pt-16'><Services /></div>
+      {/* <div id="services" className='pt-16'><Services /></div> */}
       
       <Testimonial />
         </div>

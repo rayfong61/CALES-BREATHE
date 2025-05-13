@@ -39,7 +39,7 @@ const TestimonialSlider = () => {
   };
 
   return (
-    <div className="bg-pink-100 py-12 px-10 text-center font-serif">
+    <div className="bg-pink-50 py-20 px-10 text-center font-serif">
       <Slider {...settings}>
         {testimonials.map((t, index) => (
           <div key={index} className="max-w-3xl mx-auto">

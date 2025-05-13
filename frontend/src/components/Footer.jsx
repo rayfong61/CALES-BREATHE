@@ -7,7 +7,7 @@ function Footer() {
   const { user } = useAuth();
 
   return (
-    <footer id="footer" className="bg-red-200 text-md">
+    <footer id="footer" className="bg-rose-200 text-md">
       <section className="max-w-4xl mx-auto p-10 flex flex-col sm:flex-row sm:justify-between">
         <div>
           <h2>Cale's Breathe</h2>
