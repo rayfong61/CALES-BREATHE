@@ -46,7 +46,7 @@ const TestimonialSlider = () => {
             <div className="text-white text-3xl md:text-4xl mb-4">
               {"★".repeat(t.stars)}
             </div>
-            <h2 className="text-4xl md:text-5xl text-pink-300 mb-6 font-normal">
+            <h2 className="text-4xl md:text-5xl text-rose-400 mb-6 font-normal">
               "{t.quote}"
             </h2>
             <p className="text-lg md:text-xl text-gray-700 max-w-2xl mx-auto mb-6 leading-relaxed font-sans">

@@ -12,7 +12,7 @@ function Services() {
           id="waxServices"
           className="relative max-w-full mx-auto p-4 flex flex-col justify-center text-center items-center min-h-80 overflow-hidden">
           {/* 背景圖層 */}
-          <div className="absolute inset-0 bg-[url('waxServices.jpg')] bg-cover bg-center opacity-80 z-0" />
+          <div className="absolute inset-0 bg-[url('waxServices.jpg')] bg-cover bg-center z-0" />
 
           {/* 前景內容 */}
           <div className="relative z-10 ">
@@ -55,7 +55,7 @@ function Services() {
               ))}
             </ul>
             <Link to="/booking">
-                <button className="rounded-full px-20 py-2 mt-10 text-lg md:text-xl hover:opacity-80  cursor-pointer bg-rose-700 text-white block mx-auto font-sans">
+                <button className="rounded-full px-20 py-2 mt-10 text-lg md:text-xl hover:opacity-80  cursor-pointer bg-pink-600 text-white block mx-auto font-sans">
                             BOOK NOW
                 </button>
             </Link>
@@ -84,7 +84,7 @@ function Services() {
               ))}
             </ul>
             <Link to="/booking">
-                <button className="rounded-full px-20 py-2 mt-10 text-lg md:text-xl hover:opacity-80  cursor-pointer bg-rose-700 text-white block mx-auto font-sans ">
+                <button className="rounded-full px-20 py-2 mt-10 text-lg md:text-xl hover:opacity-80  cursor-pointer bg-pink-600 text-white block mx-auto font-sans ">
                             BOOK NOW
                 </button>
             </Link>
