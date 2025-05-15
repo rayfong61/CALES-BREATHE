@@ -28,14 +28,14 @@ function Services() {
         {WaxingServices.map((section) => (
           <div key={section.category}>
             
-            <div className="grid sm:grid-cols-2 gap-x-5 mb-10">
+            <div className="grid md:grid-cols-2 gap-x-5 mb-10">
               
               
               <div>
                 <h2 className="text-rose-300 text-4xl/14 font-bold mb-5 sm:text-5xl/18">{section.category}</h2>
                 <p className="sm:text-xl mb-6">{section.description}</p>
               </div>
-              <img src={section.imgSrc} alt="WaxingItem" className='w-full h-full object-cover' />
+              <img src={section.imgSrc} alt="WaxingItem" className='w-full h-full object-cover rounded-4xl' />
 
               
             </div>
@@ -65,12 +65,12 @@ function Services() {
       <div className="max-w-5xl mx-auto space-y-12 py-20">
         {WaxingPackages.map((section) => (
           <div key={section.category}>
-            <div className="grid sm:grid-cols-2 gap-x-10 mb-10">
+            <div className="grid md:grid-cols-2 gap-x-10 mb-10">
             <div>
             <h2 className="text-rose-400 text-4xl/14 font-bold mb-5 sm:text-5xl/18">{section.category}</h2>
             <p className="sm:text-xl mb-6">{section.description}</p>
             </div>
-            <img src="package.png" alt="facial_waxing" className='w-full h-full object-cover' />
+            <img src="package.png" alt="facial_waxing" className='w-full h-full object-cover rounded-4xl' />
             </div>
             <ul>
               {section.items.map((item) => (

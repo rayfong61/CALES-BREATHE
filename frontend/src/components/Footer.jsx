@@ -14,6 +14,15 @@ function Footer() {
           330桃園市桃園區同德十一街136號3樓<br />
           Email: <a href="mailto:lindseytseng@gmail.com">lindseytseng@gmail.com</a><br />
           Phone: <a href="tel:+886925780626">0925780626</a>
+
+          <div id="socialMedia" className="flex mt-3 space-x-5">
+            <a href="https://www.facebook.com/profile.php?id=100090461412955"><img src="002-facebook.png" className="h-6"></img></a>
+            <a href="https://www.instagram.com/cales.breathe/"><img src="003-instagram.png" className="h-6"></img></a>
+            <a href="https://line.me/R/ti/p/@696vtlkc?oat_content=url"><img src="001-line.png" className="h-6"></img></a>
+            <a href="https://maps.app.goo.gl/92KRzjXYLyrDvHW99"><img src="google-maps.png" className="h-6"></img></a>
+
+          </div>
+
         </div>
         <nav className="hidden md:flex flex-col gap-2" aria-label="footer">
           

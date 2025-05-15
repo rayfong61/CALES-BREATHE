@@ -59,8 +59,43 @@ function Home() {
         </div>
       </section>
 
+      <section id="specials" className='max-w-full mx-auto py-10 bg-gray-50  text-xl sm:text-2xl'>
+        <h1 className="text-5xl sm:text-6xl text-center my-6 text-pink-300 leckerli-one-regular flex justify-center items-center gap-4">
+           Cale's specials  
+        </h1>
+        <div className='max-w-5xl mx-auto px-5  grid grid-cols-2 md:grid-cols-3'>
+          <div className='py-10 flex justify-center items-center '>
+            <img src="005-mother.png" className="h-12"></img>
+            孕婦除毛專門 
+          </div>
+          <div className='py-10 flex justify-center items-center '>
+            <img src="006-bikini.png" className="h-12"></img>
+            巴西式全除專門 
+          </div>
+          <div className='py-10 flex justify-center items-center '>
+            <img src="waxing.png" className="h-12 mr-1"></img>
+            RICA熱蠟品牌
+          </div>
+          
+          <div className='py-10 flex justify-center items-center '>
+            <img src="aromatherapy.png" className="h-11"></img>
+            芳香療法
+          </div>
+          <div className='py-10 flex justify-center items-center '>
+            <img src="008-trash-can.png" className="h-10 mr-2"></img>
+            拋棄式耗材
+          </div>
+          <div className='py-10 flex justify-center items-center '>
+            <img src="012-smiling-baby.png" className="h-10 mr-2"></img>
+            親子友善
+          </div>
+        </div>
+        
 
-      <section id="intro" className='max-w-5xl mx-auto px-15 py-20 grid sm:grid-cols-2 gap-x-10'>
+      </section>
+
+
+      <section id="story" className='max-w-5xl mx-auto px-15 py-20 grid sm:grid-cols-2 gap-x-10'>
         
         <div className='flex flex-col justify-center items-center'>
         <h2 className="text-3xl/10 md:text-4xl/12 mb-6 text-shadow-lg">
@@ -79,7 +114,7 @@ function Home() {
             </p>
         </article>
         </div>
-        <img src="test4.jpg" className='w-full h-full rounded-4xl object-cover'></img>
+        <img src="001.jpg" className='w-full h-full rounded-t-full object-cover'></img>
       </section>
       {/* <div id="services" className='pt-16'><Services /></div> */}
       
