@@ -143,14 +143,14 @@ function Login() {
                       <div 
                       onClick={handleGoogleLogin}
                       className="bg-rose-400 hover:bg-rose-300 active:bg-rose-200 text-white p-2 w-full  rounded-full border border-solid  flex justify-center gap-2 cursor-pointer" >
-                        <img src="/public/googleIcon2.png" alt="googleIcon" width="25" />
+                        <img src="googleIcon2.png" alt="googleIcon" width="25" />
                         使用Google登入
                       </div>
 
                       <div
                       onClick={handleLineLogin}
                       className="bg-rose-400 hover:bg-rose-300 active:bg-rose-200 text-white p-2 w-full  rounded-full border border-solid   flex justify-center gap-2 cursor-pointer">
-                        <img src="/public/lineIcon3.png" alt="googleIcon" width="25" />
+                        <img src="lineIcon3.png" alt="googleIcon" width="25" />
                         使用Line登入
                       </div>
                 </form>
@@ -197,14 +197,14 @@ function Login() {
           <div 
           onClick={handleGoogleLogin}
           className="bg-rose-400 hover:bg-rose-300 active:bg-rose-200 text-white p-2 w-full  rounded-full border border-solid  flex justify-center gap-2 cursor-pointer" >
-            <img src="/public/googleIcon2.png" alt="googleIcon" width="25" />
+            <img src="googleIcon2.png" alt="googleIcon" width="25" />
             使用Google註冊
           </div>
 
           <div
           onClick={handleLineLogin}
           className="bg-rose-400 hover:bg-rose-300 active:bg-rose-200 text-white p-2 w-full  rounded-full border border-solid   flex justify-center gap-2 cursor-pointer">
-            <img src="/public/lineIcon3.png" alt="googleIcon" width="25" />
+            <img src="lineIcon3.png" alt="googleIcon" width="25" />
             使用Line註冊
           </div>
           {message && <p>{message}</p>}
