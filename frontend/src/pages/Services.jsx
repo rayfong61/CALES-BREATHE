@@ -12,7 +12,7 @@ function Services() {
           id="waxServices"
           className="relative max-w-full mx-auto p-4 flex flex-col justify-center text-center items-center min-h-80 overflow-hidden">
           {/* 背景圖層 */}
-          <div className="absolute inset-0 bg-[url('waxServices.jpg')] bg-cover bg-center z-0" />
+          <div className="absolute inset-0 bg-[url('/public/waxServices.jpg')] bg-cover bg-center z-0" />
 
           {/* 前景內容 */}
           <div className="relative z-10 ">
