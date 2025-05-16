@@ -10,10 +10,10 @@ function Footer() {
     <footer id="footer" className="bg-rose-200 text-md">
       <section className="max-w-4xl mx-auto p-10 flex flex-col sm:flex-row sm:justify-between">
         <div>
-          <h2>Cale's Breathe</h2>
-          330桃園市桃園區同德十一街136號3樓<br />
-          Email: <a href="mailto:lindseytseng@gmail.com">lindseytseng@gmail.com</a><br />
-          Phone: <a href="tel:+886925780626">0925780626</a>
+          <h2 className="text-lg">Cale's Breathe</h2>
+          330桃園市桃園區XXXX街XXX號X樓<br />
+          Email: <a href="mailto:calesbreathe@gmail.com">calesbreathe@gmail.com</a><br />
+          Phone: <a href="tel:+8869XXXXXXXX">09XXXXXXXX</a>
 
           <div id="socialMedia" className="flex mt-3 space-x-5">
             <a href="https://www.facebook.com/profile.php?id=100090461412955"><img src="002-facebook.png" className="h-6"></img></a>
@@ -26,7 +26,6 @@ function Footer() {
         </div>
         <nav className="hidden md:flex flex-col gap-2" aria-label="footer">
           
-          <Link className="hover:opacity-80" to="/about">關於我們</Link>
           <Link className="hover:opacity-80" to="/services">服務項目</Link>
           <Link className="hover:opacity-80" to="/booking">立即預約</Link>
           {!user ? (

@@ -12,7 +12,6 @@ function Navbar() {
 
   const menuItems = (
     <>
-      <Link className="hover:opacity-80 " to="/about">關於我們</Link>
       <Link className="hover:opacity-80 " to="/services">服務項目</Link>
       <Link className="hover:opacity-80 " to="/booking">立即預約</Link>
       {!user ? (
