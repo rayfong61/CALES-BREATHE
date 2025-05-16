@@ -31,6 +31,7 @@ const formatDate = (date) => {
 };
 
 function BookingDateTimeContent() {
+  const api = import.meta.env.VITE_API_BASE;
   const location = useLocation();
   const [selectedServices, setSelectedServices] = useState([]);
   const [selectedAddons, setSelectedAddons] = useState([]);
@@ -42,7 +43,7 @@ function BookingDateTimeContent() {
   const [unavailableDates, setUnavailableDates] = useState([]);  // 預約「已滿」日期
 
   useEffect(() => {
-    fetch("http://localhost:5000/unavailable-dates") // 找出預約「已滿」日期
+    fetch(`${api}/unavailable-dates`) // 找出預約「已滿」日期
       .then((res) => res.json())
       .then((data) => setUnavailableDates(data))
       .catch((err) => console.error("Failed to load unavailable dates", err));
@@ -96,7 +97,7 @@ function BookingDateTimeContent() {
     if (!selectedDate) return;
     const dateStr = formatDate(selectedDate);
 
-    fetch(`http://localhost:5000/unavailable-times?date=${dateStr}`)
+    fetch(`${api}/unavailable-times?date=${dateStr}`)
       .then(res => res.json())
       .then(data => setUnavailableTimeRanges(data))
       .catch(err => console.error(err));

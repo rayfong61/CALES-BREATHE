@@ -5,7 +5,7 @@ import Orders from "../components/Orders";
 
 
 function Account() {
-    const API_BASE = import.meta.env.VITE_API_BASE;
+    const api = import.meta.env.VITE_API_BASE;
     const fallbackPhoto = "default.png"; 
     const [isBooking, setIsBooking] = useState(true);
     const toggleToAditing = () => setIsBooking(false);
@@ -80,7 +80,7 @@ function Account() {
       }
     
       try {
-        const res = await axios.put(`${API_BASE}/account/update`, data, {
+        const res = await axios.put(`${api}/account/update`, data, {
           withCredentials: true,
           headers: { "Content-Type": "multipart/form-data" },
         });
@@ -105,7 +105,7 @@ function Account() {
   
     
     const handleLogout = () => {
-        fetch(`${import.meta.env.VITE_API_BASE}/logout`, {
+        fetch(`${api}/logout`, {
           method: "GET",
           credentials: "include",
         })
@@ -131,13 +131,13 @@ function Account() {
       if (formData.photo.startsWith("http")) {
         photoSrc = formData.photo;
       } else {
-        photoSrc = `${API_BASE}${formData.photo}`;
+        photoSrc = `${api}${formData.photo}`;
       }
     } else if (user.photo) {
       if (user.photo.startsWith("http")) {
         photoSrc = user.photo;
       } else {
-        photoSrc = `${API_BASE}${user.photo}`;
+        photoSrc = `${api}${user.photo}`;
       }
     }
 

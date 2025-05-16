@@ -4,7 +4,7 @@ import { useAuth } from "../components/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
 
 function BookingClientContent() {
-  const VITE_API_BASE = import.meta.env.VITE_API_BASE;
+  const api = import.meta.env.VITE_API_BASE;
   const navigate = useNavigate();
   const { user, setUser, loading } = useAuth();
   const [bookingData, setBookingData] = useState(null);
@@ -74,13 +74,13 @@ function BookingClientContent() {
 
     try {
       // 1. 更新使用者資料
-      await axios.put("http://localhost:5000/account/update2", {
+      await axios.put(`${api}/account/update2`, {
         client_name: name.trim(),
         contact_mobile: mobile.trim(),
       }, { withCredentials: true });
 
       // 2. 提交預約資料
-      const res = await axios.post("http://localhost:5000/orders", {
+      const res = await axios.post(`${api}/orders`, {
         ...formData,
         booking_detail: JSON.stringify(formData.booking_detail),
         booking_note: note.trim() || null
@@ -102,13 +102,13 @@ function BookingClientContent() {
 
   const handleGoogleLogin = () => {
     const loginWindow = window.open(
-      "http://localhost:5000/auth/google?redirect=/booking-step3",
+      `${api}/auth/google?redirect=/booking-step3`,
       "_blank",
       "width=500,height=600"
     );
   
     const receiveMessage = (event) => {
-      if (event.origin !== "http://localhost:5000") return;
+      if (event.origin !== `${api}`) return;
   
       if (event.data === "login-success") {
         window.removeEventListener("message", receiveMessage);
@@ -122,13 +122,13 @@ function BookingClientContent() {
 
   const handleLineLogin = () => {
     const loginWindow = window.open(
-      "http://localhost:5000/auth/line?redirect=/booking-step3",
+      `${api}/auth/line?redirect=/booking-step3`,
       "_blank",
       "width=500,height=600"
     );
   
     const receiveMessage = (event) => {
-      if (event.origin !== "http://localhost:5000") return;
+      if (event.origin !== `${api}`) return;
   
       if (event.data === "login-success") {
         window.removeEventListener("message", receiveMessage);
@@ -144,7 +144,7 @@ function BookingClientContent() {
     e.preventDefault();
   
     try {
-      const res = await fetch(`${VITE_API_BASE}/login`, {
+      const res = await fetch(`${api}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

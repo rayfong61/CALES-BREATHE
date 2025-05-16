@@ -7,9 +7,9 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const API_BASE = import.meta.env.VITE_API_BASE;
+    const api = import.meta.env.VITE_API_BASE;
 
-    fetch(`${API_BASE}/me`, {
+    fetch(`${api}/me`, {
       credentials: "include",
     })
       .then(res => {

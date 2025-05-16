@@ -4,7 +4,7 @@ import { useAuth } from "../components/AuthContext";
 import { useNavigate } from "react-router";
 
 function Login() {
-  const VITE_API_BASE = import.meta.env.VITE_API_BASE;
+  const api = import.meta.env.VITE_API_BASE;
   const { user, setUser, loading } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const toggleToRigster = () => setIsLogin(false);
@@ -29,7 +29,7 @@ function Login() {
     e.preventDefault();
 
     try {
-      const res = await fetch(`${VITE_API_BASE}/register`, {
+      const res = await fetch(`${api}/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -59,7 +59,7 @@ function Login() {
     e.preventDefault();
   
     try {
-      const res = await fetch(`${VITE_API_BASE}/login`, {
+      const res = await fetch(`${api}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -86,11 +86,11 @@ function Login() {
   
 
   const handleGoogleLogin = () => {
-    window.location.href = `${VITE_API_BASE}/auth/google`;
+    window.location.href = `${api}/auth/google`;
   };
 
   const handleLineLogin = () => {
-    window.location.href = `${VITE_API_BASE}/auth/line`;
+    window.location.href = `${api}/auth/line`;
   }
 
 

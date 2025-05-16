@@ -1,31 +1,10 @@
 import { Link } from 'react-router-dom';
 import Testimonial from "../components/Testimonial";
-import Services from "./Services";
 
 function Home() {
     return (
       <div>
-        {/*<section
-          id="hero"
-          className="relative max-w-full mx-auto p-4 flex flex-col justify-center text-center items-center min-h-dvh overflow-hidden">
-           背景圖層  
-          <div className="absolute inset-0 bg-[url('src/assets/hero9.png')] bg-cover bg-center z-0" />
 
-           前景內容
-          <div className="relative z-10 ">
-            <h2 className="text-4xl md:text-5xl text-rose-700 text-shadow-xs">
-              質 感 香 氣 x 熱 蠟 美 肌
-            </h2>
-            <h1 className="text-xl py-6 md:text-2xl text-shadow-xs">
-              讓 肌 膚 深 呼 吸，讓 妳 自 在 閃 耀
-            </h1>
-            <Link to="/services">
-              <button className="rounded-full px-10 py-2 my-2 text-lg hover:opacity-80 md:text-xl cursor-pointer bg-rose-700 text-white">
-                服務項目
-              </button>
-            </Link>
-          </div>
-        </section> */}
 
       <section
         id="hero"

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../components/AuthContext"; 
 
 function Orders() {
+  const api = import.meta.env.VITE_API_BASE;
   const { user } = useAuth();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -12,7 +13,7 @@ function Orders() {
     if (!window.confirm("確定要取消這筆預約嗎？")) return;
   
     try {
-      await axios.put(`http://localhost:5000/orders/cancel/${id}`, {}, { withCredentials: true });
+      await axios.put(`${api}/orders/cancel/${id}`, {}, { withCredentials: true });
       setOrders((prev) => prev.filter((order) => order.id !== id)); // 更新畫面
     } catch (err) {
       console.error("取消失敗", err);
@@ -27,7 +28,7 @@ function Orders() {
 
     const fetchOrders = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/orders", {
+        const res = await axios.get(`${api}/orders`, {
           params: { client_id: user.id },
           withCredentials: true
         });
