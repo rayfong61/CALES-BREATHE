@@ -19,7 +19,7 @@
 - 評價與回饋彙整
 - 權限驗證保護
 
-### 技術棧
+## 技術
 
 | 前端（React） | 後端（Node.js） | 資料庫 |
 | --- | --- | --- |
@@ -28,4 +28,12 @@
 | React Router | session-based auth | bcrypt 密碼加密 |
 | 前端狀態管理：useState / useEffect | RESTful API 設計 | JWT / Session |
 
-### 內容
+## 作者
+
+### Ray Lu - Frontend Developer in progress
+rayfong61@gmail.com
+
+
+##  License
+
+本專案為學習用途，未授權商業使用。如需合作請來信洽談。
