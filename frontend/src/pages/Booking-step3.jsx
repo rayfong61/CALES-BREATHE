@@ -202,14 +202,14 @@ function BookingClientContent() {
                       <div 
                       onClick={handleGoogleLogin}
                       className="bg-rose-400 hover:bg-rose-300 active:bg-rose-200 text-white p-2 w-full  rounded-full border border-solid  flex justify-center gap-2 cursor-pointer" >
-                        <img src="src/assets/googleIcon2.png" alt="googleIcon" width="25" />
+                        <img src="googleIcon2.png" alt="googleIcon" width="25" />
                         使用Google登入
                       </div>
 
                       <div
                       onClick={handleLineLogin}
                       className="bg-rose-400 hover:bg-rose-300 active:bg-rose-200 text-white p-2 w-full  rounded-full border border-solid   flex justify-center gap-2 cursor-pointer">
-                        <img src="src/assets/lineIcon3.png" alt="googleIcon" width="25" />
+                        <img src="lineIcon3.png" alt="googleIcon" width="25" />
                         使用Line登入
                       </div>
                 </form>
