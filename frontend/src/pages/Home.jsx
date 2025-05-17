@@ -25,7 +25,7 @@ function Home() {
         {/* 前景內容 */}
         <div className="relative z-10">
           <h2 className=" text-rose-400 text-shadow-lg text-[clamp(2rem,5vw,3rem)]">
-            質 感 香 氣 / 熱 蠟 美 肌
+            質 感 香 氣 / 熱 蠟 美 肌2
           </h2>
           <h1 className=" py-6 text-[clamp(1rem,5vw,2rem)] text-white text-shadow-lg">
             讓 肌 膚 深 呼 吸，讓 妳 自 在 閃 耀
