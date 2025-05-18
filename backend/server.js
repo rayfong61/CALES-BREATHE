@@ -294,3 +294,14 @@ app.get('/unavailable-dates', async (req, res) => {
   }
 });
 
+
+// 測試 API：
+app.get("/test-db", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT NOW()");
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("資料庫連線錯誤");
+  }
+});
