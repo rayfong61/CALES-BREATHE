@@ -59,6 +59,7 @@ app.use(session({
     sameSite: "none",                // 必須是 none，否則跨網域 cookie 不會傳遞
     maxAge: 1000 * 60 * 60 * 24,     // session 有效期：1 天
     secure: true,                   // 若使用 HTTPS，應設為 true
+    httpOnly: true,
   }
 }));
 
