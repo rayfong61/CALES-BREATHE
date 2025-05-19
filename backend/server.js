@@ -56,9 +56,9 @@ app.use(session({
   resave: false,                      // 沒有變更就不重新儲存 session
   saveUninitialized: false,          // 沒登入就不產生 session
   cookie: {
+    sameSite: "none",                // 必須是 none，否則跨網域 cookie 不會傳遞
     maxAge: 1000 * 60 * 60 * 24,     // session 有效期：1 天
-    secure: false,                   // 若使用 HTTPS，應設為 true
-    httpOnly: true                   // 限瀏覽器端無法透過 JS 存取 cookie
+    secure: true,                   // 若使用 HTTPS，應設為 true
   }
 }));
 
