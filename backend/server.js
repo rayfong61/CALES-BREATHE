@@ -10,6 +10,8 @@ import "./auth-line.js";
 import "./passport-config.js";
 import accountRoutes from "./accountRoutes.js";  // 專門處理帳戶相關的 API，如註冊、登入、帳戶資料修改
 import ordersRoutes from "./ordersRoutes.js";
+import connectPgSimple from 'connect-pg-simple';
+import pg from "pg";
 
 dotenv.config();
 
@@ -17,6 +19,14 @@ const app = express();
 const saltRounds = 10;
 const PORT = process.env.PORT || 5000;
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
+const PgSession = connectPgSimple(session);
+
+const pgPool = new pg.Pool({
+  connectionString: process.env.DATABASE_URL, // 改成你的 Postgres URL
+  ssl: {
+    rejectUnauthorized: false,
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
@@ -38,6 +48,10 @@ app.use("/uploads", express.static("uploads")); // 功能：提供 /uploads 路�
 
 // Session 設定（可簡化）
 app.use(session({
+  store: new PgSession({
+      pool: pgPool,
+      tableName: 'session' // 預設表名，可改名
+    }),
   secret: process.env.SESSION_SECRET, // 從 .env 檔讀取密鑰
   resave: false,                      // 沒有變更就不重新儲存 session
   saveUninitialized: false,          // 沒登入就不產生 session
