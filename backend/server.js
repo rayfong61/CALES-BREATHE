@@ -69,6 +69,22 @@ app.use(passport.session());  // 讓 Passport 綁定 session，維持登入狀�
 app.use("/", accountRoutes); // 所有被定義在 accountRoutes 裡的路由都會從 / 開始向下套用。
 app.use('/', ordersRoutes);
 
+// 測試
+app.use((req, res, next) => {
+  console.log("Session ID:", req.sessionID);
+  console.log("Cookies:", req.headers.cookie);
+  next();
+});
+
+// 測試
+app.get("/debug-session", (req, res) => {
+  res.json({
+    sessionID: req.sessionID,
+    cookies: req.headers.cookie,
+    user: req.user,
+    session: req.session
+  });
+});
 
 
 
@@ -203,6 +219,7 @@ function ensureAuthenticated(req, res, next) {
   }
   res.status(401).json({ message: "請先登入" });
 }
+
 
 
 // 測試:檢查 session 是否維持
