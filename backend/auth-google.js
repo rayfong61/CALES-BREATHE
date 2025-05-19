@@ -8,13 +8,13 @@ dotenv.config();
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
-const FRONTEND_URL = process.env.FRONTEND_URL
+const BACKEND_URL = process.env.BACKEND_URL
 
 passport.use(
     new GoogleStrategy({
       clientID: GOOGLE_CLIENT_ID,
       clientSecret: GOOGLE_CLIENT_SECRET,
-      callbackURL: `${FRONTEND_URL}/auth/google/callback`
+      callbackURL: `${BACKEND_URL}/auth/google/callback`
     },
     async (accessToken, refreshToken, profile, done) => {
       const googleId = profile.id;
