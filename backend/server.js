@@ -44,7 +44,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true })); //  功能：處理表單資料（application/x-www-form-urlencoded）
 app.use("/uploads", express.static("uploads")); // 功能：提供 /uploads 路徑來存取伺服器上的靜態圖片或檔案。
 
-
+app.set("trust proxy", 1);
 
 // Session 設定（可簡化）
 app.use(session({
