@@ -8,11 +8,12 @@ dotenv.config();
 
 const LINE_CHANNEL_ID = process.env.LINE_CHANNEL_ID;
 const LINE_CHANNEL_SECRET = process.env.LINE_CHANNEL_SECRET;
+const FRONTEND_URL = process.env.FRONTEND_URL
 
 passport.use(new LineStrategy({
   channelID: LINE_CHANNEL_ID,
   channelSecret: LINE_CHANNEL_SECRET,
-  callbackURL: "/auth/line/callback",
+  callbackURL: `${FRONTEND_URL}/auth/line/callback`,
   scope: ["profile", "openid", "email"],
 },
 async (accessToken, refreshToken, profile, done) => {
