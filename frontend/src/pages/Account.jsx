@@ -6,7 +6,7 @@ import Orders from "../components/Orders";
 
 function Account() {
     const api = import.meta.env.VITE_API_BASE;
-    const fallbackPhoto = "default.png"; 
+    const fallbackPhoto = "default.jpg"; 
     const [isBooking, setIsBooking] = useState(true);
     const toggleToAditing = () => setIsBooking(false);
     const toggleToBooking = () => setIsBooking(true);
