@@ -16,27 +16,27 @@ import {
   import Login from "./pages/Login";
   import Account from "./pages/Account";
   import ScrollToTop from "./components/ScrollToTop";
-  import Loading from "./components/Loading";
+  // import Loading from "./components/Loading";
   
   
   function App() {
-    const location = useLocation();
-    const [loading, setLoading] = useState(false);
+    // const location = useLocation();
+    // const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-      setLoading(true);
+    // useEffect(() => {
+    //   setLoading(true);
 
-      const timer = setTimeout(() => {
-        setLoading(false);
-      },800);
+    //   const timer = setTimeout(() => {
+    //     setLoading(false);
+    //   },800);
 
-      return () => clearTimeout(timer);
-    },[location]);
+    //   return () => clearTimeout(timer);
+    // },[location]);
 
     
     return (
       <>
-        {loading && <Loading />}
+        {/* {loading && <Loading />} */}
         <ScrollToTop />
         <Navbar />
         <div className="min-h-screen">
