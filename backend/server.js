@@ -246,15 +246,16 @@ app.get("/auth/line", (req, res, next) => {
 });
 
 app.get("/auth/line/callback", passport.authenticate("line", {
-  failureRedirect: "/login"
+  failureRedirect: `${FRONTEND_URL}/booking-step3`
 }), (req, res) => {
+  const redirectPath = req.session.redirectAfterLogin || "/account";
   const html = `
     <script>
       if (window.opener) {
         window.opener.postMessage("login-success", "${FRONTEND_URL}");
         window.close();
       } else {
-        window.location.href = "${FRONTEND_URL}/account";
+        window.location.href = "${FRONTEND_URL}${redirectPath}";
       }
     </script>
   `;
@@ -272,15 +273,16 @@ app.get("/auth/google", (req, res, next) => {
 
 // Google 登入回調
 app.get("/auth/google/callback", passport.authenticate("google", {
-  failureRedirect: "/login"
+  failureRedirect: `${FRONTEND_URL}/booking-step3`
 }), (req, res) => {
+  const redirectPath = req.session.redirectAfterLogin || "/account";
   const html = `
     <script>
       if (window.opener) {
         window.opener.postMessage("login-success", "${FRONTEND_URL}");
         window.close();
       } else {
-        window.location.href = "${FRONTEND_URL}/account";
+        window.location.href = "${FRONTEND_URL}${redirectPath}";
       }
     </script>
   `;
