@@ -19,12 +19,9 @@
 
 ## 技術
 
-| 前端（React） | 後端（Node.js） | 資料庫 |
-| --- | --- | --- |
-| Vite + React | Express + Passport.js | PostgreSQL |
-| Tailwind CSS | Multer (圖片上傳) | pg Node 驅動 |
-| React Router | session-based auth | bcrypt 密碼加密 |
-| 前端狀態管理：useState / useEffect | RESTful API 設計 | Session |
+- 前端: Vite + React / Tailwind CSS 
+- 後端 : Node + Express / RESTful API / bcrypt / Session / OAuth
+- 資料庫 : PostgreSQL
 
 ##  未來計畫
 - 業者後台:月曆視圖檢視與編輯所有預約
