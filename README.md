@@ -4,18 +4,18 @@
 
 ## 功能特色
 - 首頁: 形象影片/店家介紹/顧客回饋
-![Demo](assets/home.gif)
+![Demo](frontend/src/assets/home.gif)
 - 服務項目: 服務介紹/照片/價目表/預約按鈕
-![Demo](assets/services.gif)
+![Demo](frontend/src/assets/services.gif)
 - 線上預約
-![Demo](assets/booking.gif)
+![Demo](frontend/src/assets/booking.gif)
 - 會員: 註冊 / 登入（支援 LINE、Google OAuth）/ 查看個人預約紀錄 / 編輯帳戶資料 / 上傳大頭貼
-![Demo](assets/account.gif)
+![Demo](frontend/src/assets/account.gif)
 - 響應式設計，支援手機與桌機
- ![Demo](assets/home-mobile.gif)
- ![Demo](assets/services-mobile.gif)
- ![Demo](assets/booking-mobile.gif)
- ![Demo](assets/account-mobile.gif)
+ ![Demo](frontend/src/assets/home-mobile.gif)
+ ![Demo](frontend/src/assets/services-mobile.gif)
+ ![Demo](frontend/src/assets/booking-mobile.gif)
+ ![Demo](frontend/src/assets/account-mobile.gif)
 
 ## 技術
 
