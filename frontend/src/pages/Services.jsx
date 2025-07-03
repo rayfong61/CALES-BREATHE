@@ -1,4 +1,3 @@
-import React from 'react'
 import WaxingPackages from '../components/WaxingPackages';
 import WaxingServices from '../components/WaxingServices';
 import { Link } from "react-router-dom";

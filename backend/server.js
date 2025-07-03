@@ -22,7 +22,7 @@ const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
 const PgSession = connectPgSimple(session);
 
 const pgPool = new pg.Pool({
-  connectionString: process.env.DATABASE_URL, // 改成你的 Postgres URL
+  connectionString: process.env.DATABASE_URL, 
   ssl: {
     rejectUnauthorized: false,
   }
@@ -126,14 +126,12 @@ app.post("/register", async (req, res, next) => {
     id: user.id,
     client_name: user.client_name,
     contact_mail: user.contact_mail,
-    contact_mobile: user.contact_mobile, // 加上這一行
+    contact_mobile: user.contact_mobile, 
     provider: user.provider,
-    // 你還可以加上其他欄位
   },
       });
     });
 
-    // res.status(201).json({ message: "註冊成功", user: result.rows[0] });
     console.log(result);
   } catch (error) {
     console.error(error);
