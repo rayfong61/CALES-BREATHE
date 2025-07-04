@@ -20,9 +20,13 @@
 
 ## 技術
 
-- 前端: Vite + React / Tailwind CSS 
+- 前端 : React + Vite, Tailwind CSS, React Router
 - 後端 : Node + Express / RESTful API / bcrypt / Session / OAuth
 - 資料庫 : PostgreSQL
+- 第三方登入 : Google OAuth 2.0, LINE Login
+- 狀態管理 : React Context (useAuth) + localStorage
+- 部署 : Vercel（前端）、Render（後端 + DB）
+- 資料庫管理 : pgAdmin
 
 ##  未來計畫
 - 業者後台:月曆視圖檢視與編輯所有預約
