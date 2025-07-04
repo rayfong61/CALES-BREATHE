@@ -1,4 +1,5 @@
 # Cale's Breathe 熱蠟美肌預約系統
+#### Demo:  <https://cales-breathe-5vk9.vercel.app/>
 #### Video Demo:  <https://youtu.be/NNO4vuKKK4U>
 一個為熱蠟工作室設計的客製化預約平台，結合前台預約、用戶帳戶管理與客戶評價展示，專為提升預約效率與品牌形象而打造。
 
