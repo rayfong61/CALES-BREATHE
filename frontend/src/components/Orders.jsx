@@ -33,7 +33,7 @@ function Orders() {
           withCredentials: true
         });
         setOrders(res.data);
-        console.log(res.data);
+        // console.log(res.data);
       } catch (err) {
         setErrorMsg("無法取得預約紀錄");
         console.error(err);
