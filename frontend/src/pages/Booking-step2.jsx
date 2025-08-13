@@ -49,7 +49,7 @@ function BookingDateTimeContent() {
       .catch((err) => console.error("Failed to load unavailable dates", err));
   }, []);
 
-  console.log(unavailableDates);
+  // console.log(unavailableDates);
 
   
 
@@ -119,7 +119,7 @@ const getAvailableTimes = () => {
     };
     localStorage.setItem("bookingData", JSON.stringify(bookingDetails));
     setConfirmedBooking(bookingDetails);
-    console.log(bookingDetails);
+    // console.log(bookingDetails);
   };
 
   return (

@@ -120,9 +120,9 @@ function Booking() {
   };
 
 // test~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   console.log(selectedItemIds);
-   console.log(selectedAddons);
-   console.log(getSelectedItems());
+  //  console.log(selectedItemIds);
+  //  console.log(selectedAddons);
+  //  console.log(getSelectedItems());
 
   return (
     <div className="max-w-xl mx-auto p-6 my-6 bg-white rounded-xl shadow-md">
